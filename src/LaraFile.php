@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace DjurovicIgoor\LaraFiles;
 
 use Illuminate\Database\Eloquent\Model;
 
