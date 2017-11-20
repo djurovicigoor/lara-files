@@ -1,0 +1,30 @@
+{
+    "name": "djurovicigoor/lara-files",
+    "description": "Package for easier work with files . . .",
+    "keywords": [
+        "files",
+        "lara-files",
+        "file",
+        "storage",
+        "djurovicigoor"
+    ],
+    "homepage": "https://github.com/djurovicigoor/lara-files",
+    "type": "library",
+    "license": "MIT",
+
+    "authors": [
+        {
+            "name": "Djurovic Igor",
+            "email": "djurovic.igoor@gmail.com",
+            "homepage": "http://djurovicpro.com",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "DjurovicIgoor\\LaraFiles\\": "src"
+        }
+    }
+}
