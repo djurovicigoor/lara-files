@@ -25,7 +25,7 @@ class CreateLaraFilesTable extends Migration {
 			$table->integer('larafilesable_id')->default(0);
 			$table->text('description')->nullable();
 			$table->unsignedInteger('author_id')->nullable();
-			$table->boolean('public')->default(config('lara-files.public'));
+			$table->boolean('storage')->default(config('lara-files.storage'));
 			$table->timestamps();
 		});
 	}

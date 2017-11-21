@@ -4,6 +4,9 @@ namespace DjurovicIgoor\LaraFiles;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $url
+ */
 class LaraFile extends Model {
 
 	/**
@@ -11,7 +14,7 @@ class LaraFile extends Model {
 	 *
 	 * @var string
 	 */
-	protected $table = 'lara-files';
+	protected $table = 'lara_files';
 
 	/**
 	 * The attributes that aren't mass assignable.
@@ -41,7 +44,8 @@ class LaraFile extends Model {
 		'larafilesable_type',
 		'larafilesable_id',
 		'description',
-		'public',
+		'storage',
+		'author_id',
 	];
 
 	/**

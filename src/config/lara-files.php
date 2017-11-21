@@ -41,8 +41,17 @@ return [
 	| Default storage
 	|--------------------------------------------------------------------------
 	|
-	| TRUE  => use public_path()
-	| FALSE => use storage_path()
+	| TRUE  => use storage_path()
+	| FALSE => use public_path()
 	*/
-	'public'       => TRUE,
+	'storage'       => TRUE,
+	/*
+	|--------------------------------------------------------------------------
+	| Default folder
+	|--------------------------------------------------------------------------
+	|
+	| TRUE  => use storage_path()
+	| FALSE => use public_path()
+	*/
+	'default_folder'       => "lara-files",
 ];

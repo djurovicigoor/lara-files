@@ -8,52 +8,78 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
+use DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler;
 use DjurovicIgoor\LaraFiles\LaraFile;
 
 trait LaraFileTrait {
-
-	/**
-	 * @param     $files
-	 * @param int $type
-	 *
-	 * @return $this
-	 * @internal param $fileable
-	 * @internal param $commentable
-	 */
-	public function file($files, $type = 1) {
-
-		if (!is_array($files)) {
+	
+	public $modelPath;
+	
+	public function __construct() {
+		$namespaceArray  = explode( '\\', get_class() );
+		$this->modelPath = config( 'lara-files.default_folder' ) . '/' . strtolower( end( $namespaceArray ) );
+	}
+	
+	public function addFile( $files, $description = NULL, $user = NULL ) {
+		
+		if(!isset( $files )) {
+			return NULL;
+		}
+		
+		if(!is_array( $files )) {
 			$files = [$files];
 		}
-		$files = collect($files);
-		$path  = 'uploads/' . strtolower(substr(get_class(), strpos(get_class(), '\\') + 1)) . '/' . $this->id;
-		if ($files->isNotEmpty()) {
-			foreach ($files as $value) {
-				$fileHandler = new FileHandler;
-				$fileHandler->uploadPath(public_path($path))->addFile($value);
-				$file = new LaraFile([
-					'path'               => $path,
-					'hash_name'          => $fileHandler->hashName,
-					'name'               => $fileHandler->originalName,
-					'mime'               => $fileHandler->originalExtension,
-					'type'               => $type,
-					'larafilesable_type' => get_class(),
-					'larafilesable_id'   => $this->id,
-					'description'        => '',
-				]);
-				$this->files()->save($file);
-			}
-		}
-
+		
+		$files = collect( $files );
+		
+		$files->each( function( $file ) use ( $description, $user ) {
+			$LaraFilesHandler = LaraFilesHandler::uploadPath( $this->setPath() )->addFile( $file );
+			$laraFile         = $this->storeFile( $LaraFilesHandler, $description, $user );
+			$this->laraFiles()->save( $laraFile );
+		} );
+		
 		return $this;
 	}
-
+	
+	/**
+	 * @return string
+	 */
+	public function setPath() {
+		if($this->storage) {
+			$path = storage_path( $this->modelPath );
+		} else {
+			$path = public_path( $this->modelPath );
+		}
+		
+		return $path;
+	}
+	
+	/**
+	 * @param \DjurovicIgoor\LaraFiles\helpers\LaraFilesHandler $LaraFilesHandler
+	 * @param null                                              $description
+	 * @param null                                              $user
+	 * @return \DjurovicIgoor\LaraFiles\LaraFile
+	 */
+	public function storeFile( LaraFilesHandler $LaraFilesHandler, $description = NULL, $user = NULL ) {
+		return new LaraFile( [
+			'path'               => $this->modelPath . '/' . $this->attributes['id'] . '/',
+			'hash_name'          => $LaraFilesHandler->hash_name,
+			'name'               => $LaraFilesHandler->name,
+			'mime'               => $LaraFilesHandler->mime,
+			'type'               => 1,
+			'larafilesable_type' => get_class(),
+			'larafilesable_id'   => $this->id,
+			'description'        => $description,
+			'author_id'          => !is_null( $user ) ?: $user->id,
+		] );
+	}
+	
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
 	 */
-	public function files() {
-
-		return $this->morphMany(LaraFile::class, 'larafilesable')->where('type', 1);
+	public function laraFiles() {
+		
+		return $this->morphMany( LaraFile::class, 'larafilesable' );
 	}
-
+	
 }
