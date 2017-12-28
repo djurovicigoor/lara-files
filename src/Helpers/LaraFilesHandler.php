@@ -130,7 +130,7 @@ class LaraFilesHandler {
 				throw new \Exception( '\DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler::127 $path is not available' );
 			}
 		} catch(\Exception $e) {
-			$this->errors->push( $e->getTraceAsString() );
+			$this->errors->push( $e->ge);
 		}
 		
 		return $this->isSuccess();
@@ -141,19 +141,11 @@ class LaraFilesHandler {
 	 */
 	private function isSuccess() {
 		
-		try {
-			if($this->errors->isNotEmpty()) {
-				throw new \Exception( $this->errors->first() );
-			}
-			
+		if($this->errors->isNotEmpty()) {
 			return $this;
-		} catch(\Exception $e) {
-			return response()->json( [
-				'message' => $e->getTraceAsString(),
-				'entity'  => NULL,
-				'code'    => 500,
-			], 500 );
+			#return $this->errors;
 		}
+		
 	}
 	
 	/**
