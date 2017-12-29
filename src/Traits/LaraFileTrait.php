@@ -8,22 +8,21 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
-use DjurovicIgoor\LaraFiles\Helpers\LaraFileError;
 use DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler;
 use DjurovicIgoor\LaraFiles\LaraFile;
 
 trait LaraFileTrait {
 	
 	public $modelPath;
-	public $errors;
+	public $laraErrors;
 	
 	/**
 	 * LaraFileTrait constructor.
 	 */
 	public function __construct() {
-		$namespaceArray  = explode( '\\', get_class() );
-		$this->modelPath = config( 'lara-files.default_folder' ) . '/' . strtolower( end( $namespaceArray ) );
-		$this->errors = collect();
+		$namespaceArray   = explode( '\\', get_class() );
+		$this->modelPath  = config( 'lara-files.default_folder' ) . '/' . strtolower( end( $namespaceArray ) );
+		$this->laraErrors = collect();
 	}
 	
 	/**
@@ -35,9 +34,8 @@ trait LaraFileTrait {
 	 * @return $this|null
 	 */
 	public function addFiles( $files, $description = NULL, $user = NULL, $type = 1, $storage = NULL ) {
-		
-		if(!isset( $storage )) {
-			$storage = config( 'lara-files.storage' );
+		if(!is_null( $storage )) {
+			$this->storage = $storage;
 		}
 		
 		if(!isset( $files )) {
@@ -56,12 +54,18 @@ trait LaraFileTrait {
 			if($LaraFilesHandler->errors->isEmpty()) {
 				$laraFile = $this->storeFile( $LaraFilesHandler, $description, $user );
 				$this->laraFiles()->save( $laraFile );
-			}else{
-				LaraFileError::setError($LaraFilesHandler);			}
+			} else {
+				$this->laraErrors->push( $LaraFilesHandler );
+			}
 			
 		} );
 		
-		return $this;
+		
+		if($this->laraErrors->isNotEmpty()) {
+			return $this;
+		} else {
+			return NULL;
+		}
 	}
 	
 	/**

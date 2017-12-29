@@ -130,7 +130,7 @@ class LaraFilesHandler {
 				throw new \Exception( '\DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler::127 $path is not available' );
 			}
 		} catch(\Exception $e) {
-			$this->errors->push( $e->ge);
+			$this->errors->push( $e );
 		}
 		
 		return $this->isSuccess();
@@ -140,11 +140,12 @@ class LaraFilesHandler {
 	 * Checks whether there is an error
 	 */
 	private function isSuccess() {
+		return $this;
 		
-		if($this->errors->isNotEmpty()) {
+	/*	if($this->errors->isNotEmpty()) {
 			return $this;
 			#return $this->errors;
-		}
+		}*/
 		
 	}
 	
@@ -163,7 +164,7 @@ class LaraFilesHandler {
 				File::delete( $this->path );
 			}
 		} catch(\Exception $e) {
-			$this->errors->push( $e->getMessage() . '; Line: ' . $e->getLine() );
+			$this->errors->push( $e );
 		}
 		
 		return $this->isSuccess();
@@ -172,8 +173,7 @@ class LaraFilesHandler {
 	/**
 	 * Sets a new upload path
 	 *
-	 * @param $uploadPath
-	 *
+	 * @param $path
 	 * @return $this
 	 */
 	public static function uploadPath( $path ) {
