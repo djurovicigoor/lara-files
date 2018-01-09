@@ -27,19 +27,21 @@ trait LaraFileTrait {
 	
 	/**
 	 * @param      $files
+	 * @param null $storage
 	 * @param null $description
 	 * @param null $user
 	 * @param int  $type
-	 * @param null $storage
-	 * @return $this|null
+	 * @return void
+	 * @throws \Exception
 	 */
-	public function addFiles( $files, $description = NULL, $user = NULL, $type = 1, $storage = NULL ) {
+	public function addFiles( $files, $storage = NULL ,$description = NULL, $user = NULL, $type = 1) {
 		if(!is_null( $storage )) {
 			$this->storage = $storage;
 		}
 		
 		if(!isset( $files )) {
-			return NULL;
+			$this->laraErrors->push(LaraFilesHandler::setError());
+			return;
 		}
 		
 		if(!is_array( $files )) {
@@ -50,16 +52,15 @@ trait LaraFileTrait {
 		
 		$files->each( function( $file ) use ( $description, $user ) {
 			
-			$LaraFilesHandler = LaraFilesHandler::uploadPath( $this->setPath() )->addFile( $file );
-			if($LaraFilesHandler->errors->isEmpty()) {
-				$laraFile = $this->storeFile( $LaraFilesHandler, $description, $user );
-				$this->laraFiles()->save( $laraFile );
+			$laraFilesHandler = LaraFilesHandler::uploadPath( $this->setPath() )->addFile( $file );
+			if($laraFilesHandler->hasError()) {
+				
+				$this->laraErrors->push( $laraFilesHandler );
 			} else {
-				$this->laraErrors->push( $LaraFilesHandler );
+				$this->laraFiles()->save( $this->storeFile( $laraFilesHandler, $description, $user ) );
 			}
 			
 		} );
-		
 		
 		if($this->laraErrors->isNotEmpty()) {
 			return $this;
@@ -97,7 +98,7 @@ trait LaraFileTrait {
 			'larafilesable_type' => get_class(),
 			'larafilesable_id'   => $this->id,
 			'description'        => $description,
-			'author_id'          => !is_null( $user ) ?: $user->id,
+			#'author_id'          => !is_null( $user ) ?: $user->id,
 		] );
 	}
 	

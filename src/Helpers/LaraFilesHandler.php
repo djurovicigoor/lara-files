@@ -21,7 +21,7 @@ class LaraFilesHandler {
 	public $type;
 	public $description;
 	public $storage;
-	public $errors;
+	public $error;
 	
 	/**
 	 * Default constructor
@@ -37,7 +37,7 @@ class LaraFilesHandler {
 		$this->type        = NULL;
 		$this->description = NULL;
 		$this->storage     = NULL;
-		$this->errors      = collect();
+		$this->error       = NULL;
 	}
 	
 	/**
@@ -46,7 +46,6 @@ class LaraFilesHandler {
 	 * @param $path
 	 */
 	public static function makeDir( $path ) {
-		
 		File::exists( $path ) or File::makeDirectory( $path, 0777, TRUE );
 	}
 	
@@ -56,6 +55,7 @@ class LaraFilesHandler {
 	 *
 	 * @param $source
 	 * @param $destination
+	 * @return
 	 */
 	public static function copy( $source, $destination ) {
 		
@@ -130,7 +130,7 @@ class LaraFilesHandler {
 				throw new \Exception( '\DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler::127 $path is not available' );
 			}
 		} catch(\Exception $e) {
-			$this->errors->push( $e );
+			$this->error = $e;
 		}
 		
 		return $this->isSuccess();
@@ -142,10 +142,10 @@ class LaraFilesHandler {
 	private function isSuccess() {
 		return $this;
 		
-	/*	if($this->errors->isNotEmpty()) {
-			return $this;
-			#return $this->errors;
-		}*/
+		/*	if($this->errors->isNotEmpty()) {
+				return $this;
+				#return $this->errors;
+			}*/
 		
 	}
 	
@@ -164,7 +164,7 @@ class LaraFilesHandler {
 				File::delete( $this->path );
 			}
 		} catch(\Exception $e) {
-			$this->errors->push( $e );
+			$this->error = $e;
 		}
 		
 		return $this->isSuccess();
@@ -182,6 +182,37 @@ class LaraFilesHandler {
 		$obj->path = $path;
 		if($obj->path) {
 			File::makeDirectory( $obj->path, 0777, TRUE, TRUE );
+		}
+		
+		return $obj;
+	}
+	
+	/**
+	 * has error
+	 *
+	 * @return bool
+	 */
+	public function hasError() {
+		if($this->error) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+	
+	/**
+	 * set error
+	 *
+	 * @return \DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler
+	 * @throws \Exception
+	 */
+	public static function setError() {
+		$obj = new static();
+		
+		try {
+			throw new \Exception( 'File not provided!', 400 );
+		} catch(\Exception $e) {
+			$obj->error = $e;
 		}
 		
 		return $obj;
