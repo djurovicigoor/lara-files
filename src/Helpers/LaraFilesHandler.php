@@ -9,6 +9,7 @@
 namespace DjurovicIgoor\LaraFiles\Helpers;
 
 use function dd;
+use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 
@@ -27,11 +28,11 @@ class LaraFilesHandler {
     /**
      * Default constructor
      *
-     * @param null $path
-     * @param null $storage
-     * @param null $type
-     * @param null $description
-     * @param      $user
+     * @param $path
+     * @param $storage
+     * @param $type
+     * @param $description
+     * @param $user
      */
     public function __construct($path = NULL, $storage = NULL, $type = NULL, $description = NULL, $user = NULL) {
 
@@ -46,78 +47,66 @@ class LaraFilesHandler {
         $this->error       = NULL;
     }
 
+    public function toArray($type, $id) {
+        return [
+            'path'               => $this->path,
+            'hash_name'          => $this->hash_name,
+            'name'               => $this->name,
+            'extension'          => $this->extension,
+            'type'               => $this->type,
+            'larafilesable_type' => $type,
+            'larafilesable_id'   => $id,
+            'description'        => $this->description,
+            'author_id'          => !is_null($this->author) ?: $this->author->id,
+        ];
+    }
+
     /**
      * Creates a directory
      *
-     * @param $path
      */
-    public static function makeDir($path) {
-
-        File::exists($path) or File::makeDirectory($path, 0777, TRUE);
-    }
-
-    /**
-     * Copies a file from source
-     * to destination
-     *
-     * @param $source
-     * @param $destination
-     *
-     * @return
-     */
-    public static function copy($source, $destination) {
-
-        copy($source, $destination);
-
-        return File::exists($destination);
-    }
-
-    /**
-     * Find file by source path
-     *
-     * @param $source
-     *
-     * @return null
-     */
-    public static function find($source) {
+    public function createFolder() {
 
         try {
-            return File::get($source);
-        } catch (\Exception $e) {
-            return NULL;
+            try {
+                File::makeDirectory($this->path, 0777, TRUE);
+            } catch (\Exception $exception) {
+                throw new \Exception("Couldn't create $this->path");
+                $this->setExceptionError($exception);
+            }
+        } catch (\Exception $exception) {
+            $this->setExceptionError($exception);
         }
     }
 
     /**
-     * Find file extension by source path
-     *
-     * @param $source
      *
      * @return null
      */
-    public static function extension($source) {
+    public function setPermission() {
 
-        try {
-            return File::extension($source);
-        } catch (\Exception $e) {
-            return NULL;
+        if (!File::isWritable($this->path)) {
+            File::chmod($this->path, 0777);
         }
     }
 
     /**
-     * Delete recursively without deleting parent
-     *
-     * @param $source
+     * @return bool
      */
-    public static function removeDir($source) {
+    public function ifFolderExist() {
 
-        return File::deleteDirectory($source, TRUE);
+        if (File::exists($this->path)) {
+            $this->setPermission();
+        } else {
+            $this->createFolder();
+        }
+
+        return $this->hasError();
     }
 
     /**
      * Handles files upload
      *
-     * @param UploadedFile|null             $file
      * @param \Illuminate\Http\UploadedFile $file
      *
      * @return LaraFilesHandler
@@ -125,58 +114,85 @@ class LaraFilesHandler {
     public function addFile(UploadedFile $file = NULL) {
 
         if (isset($file)) {
-            $this->setHashName();
-            $this->setName($file);
-            $this->setExtension($file);
-            dd($this);
-        } else {
-
-        }
-        try {
-            if ($this->path) {
-                $this->file = $file;
-                if ($this->file) {
-                    $hashName        = md5(microtime());
-                    $this->hash_name = $hashName;
-                    $this->name      = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                    $this->extension = $file->getClientOriginalExtension();
-                    $file->move($this->path, $hashName . '.' . $file->getClientOriginalExtension());
+            if (!$this->ifFolderExist()) {
+                $this->setHashName();
+                $this->setName($file);
+                $this->setExtension($file);
+                if (!$this->hasError()) {
+                    try {
+                        $file->move($this->path, $this->hash_name . '.' . $file->getClientOriginalExtension());
+                    } catch (\Exception $exception) {
+                        $this->setExceptionError($exception);
+                    }
                 }
-            } else {
-                throw new \Exception('\DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler::127 $path is not available');
+
+                return $this;
             }
-        } catch (\Exception $e) {
-            $this->error = $e;
+        } else {
+            $this->setError("File not provided!");
         }
-
-        return $this->isSuccess();
-    }
-
-    public function setHashName() {
-
-        $this->hash_name = md5(microtime());
-    }
-
-    public function setName(UploadedFile $file) {
-
-        $this->name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-    }
-
-    public function setExtension(UploadedFile $file) {
-
-        $this->extension = $file->getClientOriginalExtension();
     }
 
     /**
-     * Checks whether there is an error
      */
-    private function isSuccess() {
+    public function setHashName() {
 
-        return $this;
-        /*	if($this->errors->isNotEmpty()) {
-                return $this;
-                #return $this->errors;
-            }*/
+        $this->hash_name = md5(microtime());
+        try {
+            if (!isset($this->hash_name)) {
+                throw new \Exception("\DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler::166 file hash name not set!", 404);
+            }
+        } catch (\Exception $exception) {
+            $this->setExceptionError($exception);
+        }
+    }
+
+    /**
+     * @param UploadedFile $file
+     *
+     */
+    public function setName(UploadedFile $file) {
+
+        $this->name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        try {
+            if (!isset($this->name)) {
+                throw new \Exception("\DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler::177 file name not set!", 404);
+            }
+        } catch (\Exception $exception) {
+            $this->setExceptionError($exception);
+        }
+    }
+
+    /**
+     * @param UploadedFile $file
+     *
+     */
+    public function setExtension(UploadedFile $file) {
+
+        $this->extension = $file->getClientOriginalExtension();
+        try {
+            if (!isset($this->extension)) {
+                throw new \Exception("\DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler::177 file name not set!", 404);
+            }
+        } catch (\Exception $exception) {
+            $this->setExceptionError($exception);
+        }
+    }
+
+    /**
+     * @param Exception $exception
+     */
+    public function setExceptionError(Exception $exception) {
+
+        $this->error = $exception->getMessage();
+    }
+
+    /**
+     * @param null $message
+     */
+    public function setError($message = NULL) {
+
+        $this->error = $message;
     }
 
     /**
@@ -186,20 +202,19 @@ class LaraFilesHandler {
      *
      * @return $this
      */
-    public function removeFile($source = NULL) {
-
-        try {
-            $this->path = $source;
-            if ($this->path && File::exists($this->path)) {
-                File::delete($this->path);
-            }
-        } catch (\Exception $e) {
-            $this->error = $e;
-        }
-
-        return $this->isSuccess();
-    }
-
+    //    public function removeFile($source = NULL) {
+    //
+    //        try {
+    //            $this->path = $source;
+    //            if ($this->path && File::exists($this->path)) {
+    //                File::delete($this->path);
+    //            }
+    //        } catch (\Exception $e) {
+    //            $this->error = $e;
+    //        }
+    //
+    //        return $this->isSuccess();
+    //    }
     /**
      * Sets a new upload path
      *
@@ -232,21 +247,21 @@ class LaraFilesHandler {
         }
     }
 
-    /**
-     * set error
-     *
-     * @return \DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler
-     * @throws \Exception
-     */
-    public static function setError() {
-
-        $obj = new static();
-        try {
-            throw new \Exception('File not provided!', 400);
-        } catch (\Exception $e) {
-            $obj->error = $e;
-        }
-
-        return $obj;
-    }
+    //    /**
+    //     * set error
+    //     *
+    //     * @return \DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler
+    //     * @throws \Exception
+    //     */
+    //    public static function setError() {
+    //
+    //        $obj = new static();
+    //        try {
+    //            throw new \Exception('File not provided!', 400);
+    //        } catch (\Exception $e) {
+    //            $obj->error = $e;
+    //        }
+    //
+    //        return $obj;
+    //    }
 }

@@ -8,8 +8,6 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
-use function config;
-use function dd;
 use DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler;
 use DjurovicIgoor\LaraFiles\LaraFile;
 
@@ -69,7 +67,7 @@ trait LaraFileTrait {
 
         return parent::__call($method, $arguments);
     }
-    //
+
     //    public function getRelationValue($key)
     //    {
     //        // If the key already exists in the relationships array, it just means the
@@ -98,28 +96,12 @@ trait LaraFileTrait {
      */
     public function addFile($file, $storage = NULL, $type = NULL, $description = NULL, $user = NULL) {
 
-        //        dd($this->useNameHashing(), $this->useStorage($storage));
-        if (!isset($file)) {
-            $this->laraFileError = LaraFilesHandler::setError();
-
-            return;
-        }
-        //        $laraFilesHandler = LaraFilesHandler::uploadPath($this->setPath())->addFile($file);
-        $laraFilesHandler = new LaraFilesHandler($this->setPath($this->useStorage($storage)), $this->useStorage($storage), $type, $description);
+        $laraFilesHandler = new LaraFilesHandler($this->setPath($this->useStorage($storage)), $this->useStorage($storage), $type, $description, $user);
         $laraFilesHandler->addFile($file);
-
-        dd($laraFilesHandler);
         if ($laraFilesHandler->hasError()) {
-
             $this->laraFileError = $laraFilesHandler;
         } else {
-            $this->laraFiles()->save($this->storeFile($laraFilesHandler, $description, $user));
-        }
-        if ($this->laraFileError) {
-            /** @var TYPE_NAME $this */
-            return $this;
-        } else {
-            return NULL;
+            $this->laraFiles()->save($this->storeFile($laraFilesHandler->toArray(get_class(), $this->id)));
         }
     }
 
@@ -133,73 +115,70 @@ trait LaraFileTrait {
      * @return void
      * @throws \Exception
      */
-    public function addFiles($files, $storage = NULL, $description = NULL, $user = NULL, $type = 1) {
-
-        if (!is_null($storage)) {
-            $this->storage = $storage;
-        }
-        if (!isset($files)) {
-            $this->laraErrors->push(LaraFilesHandler::setError());
-
-            return;
-        }
-        if (!is_array($files)) {
-            $files = [$files];
-        }
-        $files = collect($files);
-        $files->each(function ($file) use ($description, $user) {
-
-            $laraFilesHandler = LaraFilesHandler::uploadPath($this->setPath())->addFile($file);
-            if ($laraFilesHandler->hasError()) {
-
-                $this->laraErrors->push($laraFilesHandler);
-            } else {
-                $this->laraFiles()->save($this->storeFile($laraFilesHandler, $description, $user));
-            }
-        });
-        if ($this->laraErrors->isNotEmpty()) {
-            return $this;
-        } else {
-            return NULL;
-        }
-    }
-
+    //    public function addFiles($files, $storage = NULL, $description = NULL, $user = NULL, $type = 1) {
+    //
+    //        if (!is_null($storage)) {
+    //            $this->storage = $storage;
+    //        }
+    //        if (!isset($files)) {
+    //            $this->laraErrors->push(LaraFilesHandler::setError());
+    //
+    //            return;
+    //        }
+    //        if (!is_array($files)) {
+    //            $files = [$files];
+    //        }
+    //        $files = collect($files);
+    //        $files->each(function ($file) use ($description, $user) {
+    //
+    //            $laraFilesHandler = LaraFilesHandler::uploadPath($this->setPath())->addFile($file);
+    //            if ($laraFilesHandler->hasError()) {
+    //
+    //                $this->laraErrors->push($laraFilesHandler);
+    //            } else {
+    //                $this->laraFiles()->save($this->storeFile($laraFilesHandler, $description, $user));
+    //            }
+    //        });
+    //        if ($this->laraErrors->isNotEmpty()) {
+    //            return $this;
+    //        } else {
+    //            return NULL;
+    //        }
+    //    }
     /**
-     * @param $storage
+     * @param      $storage
+     *
+     * @param bool $fullPath
      *
      * @return string
      */
-    public function setPath($storage) {
+    public function setPath($storage, $fullPath = FALSE) {
 
-        if ($storage) {
-            $path = storage_path($this->modelPath);
+        if ($fullPath) {
+            if ($storage) {
+                $path = storage_path($this->modelPath);
+            } else {
+                $path = public_path($this->modelPath);
+            }
         } else {
-            $path = public_path($this->modelPath);
+            if ($storage) {
+                $path = $this->modelPath;
+            } else {
+                $path = $this->modelPath;
+            }
         }
 
         return $path;
     }
 
     /**
-     * @param \DjurovicIgoor\LaraFiles\helpers\LaraFilesHandler $LaraFilesHandler
-     * @param null                                              $description
-     * @param null                                              $user
+     * @param $data
      *
      * @return \DjurovicIgoor\LaraFiles\LaraFile
      */
-    public function storeFile(LaraFilesHandler $LaraFilesHandler, $description = NULL, $user = NULL) {
+    public function storeFile($data) {
 
-        return new LaraFile([
-            'path'               => $this->modelPath . '/' . $this->attributes['id'] . '/',
-            'hash_name'          => $LaraFilesHandler->hash_name,
-            'name'               => $LaraFilesHandler->name,
-            'extension'          => $LaraFilesHandler->extension,
-            'type'               => 1,
-            'larafilesable_type' => get_class(),
-            'larafilesable_id'   => $this->id,
-            'description'        => $description,
-            #'author_id'          => !is_null( $user ) ?: $user->id,
-        ]);
+        return new LaraFile($data);
     }
 
     /**

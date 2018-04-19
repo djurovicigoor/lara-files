@@ -40,7 +40,7 @@ class LaraFile extends Model {
         'path',
         'hash_name',
         'name',
-        'mime',
+        'extension',
         'type',
         'larafilesable_type',
         'larafilesable_id',
