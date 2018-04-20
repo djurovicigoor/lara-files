@@ -8,6 +8,7 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
+use function dd;
 use DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler;
 use DjurovicIgoor\LaraFiles\LaraFile;
 
@@ -16,20 +17,17 @@ use DjurovicIgoor\LaraFiles\LaraFile;
  */
 trait LaraFileTrait {
 
-    public $modelPath;
-    public $laraFIleError;
-
-    /**
-     * LaraFileTrait constructor.
-     *
-     * @param array $attributes
-     */
-    public function __construct($attributes = []) {
-
-        parent::__construct($attributes); // Calls Default Constructor
-        $this->modelPath = config('lara-files.default_folder') . '/' . strtolower(class_basename($this));
-    }
-
+    public $laraFileError;
+    //
+    //    /**
+    //     * LaraFileTrait constructor.
+    //     *
+    //     * @param array $attributes
+    //     */
+    //    public function __construct($attributes = []) {
+    //
+    //        parent::__construct($attributes); // Calls Default Constructor
+    //    }
     /**
      * @param $method
      * @param $arguments
@@ -96,11 +94,11 @@ trait LaraFileTrait {
      */
     public function addFile($file, $storage = NULL, $type = NULL, $description = NULL, $user = NULL) {
 
-        $laraFilesHandler = new LaraFilesHandler($this->setPath($this->useStorage($storage)), $this->useStorage($storage), $type, $description, $user);
-        $laraFilesHandler->addFile($file);
-        if ($laraFilesHandler->hasError()) {
+        $laraFilesHandler = new LaraFilesHandler($this->getModelPath(), $this->useStorage($storage), $type, $description, $user);
+        if ($laraFilesHandler->addFile($file)) {
             $this->laraFileError = $laraFilesHandler;
         } else {
+            $this->laraFileError = $laraFilesHandler;
             $this->laraFiles()->save($this->storeFile($laraFilesHandler->toArray(get_class(), $this->id)));
         }
     }
@@ -115,60 +113,37 @@ trait LaraFileTrait {
      * @return void
      * @throws \Exception
      */
-    //    public function addFiles($files, $storage = NULL, $description = NULL, $user = NULL, $type = 1) {
-    //
-    //        if (!is_null($storage)) {
-    //            $this->storage = $storage;
-    //        }
-    //        if (!isset($files)) {
-    //            $this->laraErrors->push(LaraFilesHandler::setError());
-    //
-    //            return;
-    //        }
-    //        if (!is_array($files)) {
-    //            $files = [$files];
-    //        }
-    //        $files = collect($files);
-    //        $files->each(function ($file) use ($description, $user) {
-    //
-    //            $laraFilesHandler = LaraFilesHandler::uploadPath($this->setPath())->addFile($file);
-    //            if ($laraFilesHandler->hasError()) {
-    //
-    //                $this->laraErrors->push($laraFilesHandler);
-    //            } else {
-    //                $this->laraFiles()->save($this->storeFile($laraFilesHandler, $description, $user));
-    //            }
-    //        });
-    //        if ($this->laraErrors->isNotEmpty()) {
-    //            return $this;
-    //        } else {
-    //            return NULL;
-    //        }
-    //    }
+    public function addFiles($files, $storage = NULL, $type = NULL, $description = NULL, $user = NULL) {
+
+
+        if (!is_array($files)) {
+            $files = [$files];
+        }
+        $files = collect($files);
+        $files->each(function ($file) use ($storage, $description, $user, $type) {
+
+            $laraFilesHandler = new LaraFilesHandler($this->getModelPath(), $this->useStorage($storage), $type, $description, $user);
+            if ($laraFilesHandler->addFile($file)) {
+                $this->laraFileError = $laraFilesHandler;
+            } else {
+                $this->laraFileError = $laraFilesHandler;
+                $this->laraFiles()->save($this->storeFile($laraFilesHandler->toArray(get_class(), $this->id)));
+            }
+        });
+    }
+
     /**
-     * @param      $storage
-     *
-     * @param bool $fullPath
      *
      * @return string
      */
-    public function setPath($storage, $fullPath = FALSE) {
+    public function getModelPath() {
 
-        if ($fullPath) {
-            if ($storage) {
-                $path = storage_path($this->modelPath);
-            } else {
-                $path = public_path($this->modelPath);
-            }
-        } else {
-            if ($storage) {
-                $path = $this->modelPath;
-            } else {
-                $path = $this->modelPath;
-            }
-        }
+        return config('lara-files.default_folder') . '/' . strtolower(class_basename($this));
+    }
 
-        return $path;
+    public function getFullSavePath() {
+
+        LaraFilesHandler::setPath($this->useStorage(), $this->getModelPath());
     }
 
     /**
@@ -196,7 +171,7 @@ trait LaraFileTrait {
      */
     public function useStorage($storage) {
 
-        return !isset($storage) ? ((isset($this->laraFilesStorage)) ? $this->laraFilesStorage : config('lara-files.storage')) : $storage;
+        return isset($storage) ? $storage : ((isset($this->laraFilesStorage)) ? ($this->laraFilesStorage) : (config('lara-files.storage')));
     }
 
     /**

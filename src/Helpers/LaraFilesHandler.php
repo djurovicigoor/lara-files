@@ -47,7 +47,14 @@ class LaraFilesHandler {
         $this->error       = NULL;
     }
 
+    /**
+     * @param $type
+     * @param $id
+     *
+     * @return array
+     */
     public function toArray($type, $id) {
+
         return [
             'path'               => $this->path,
             'hash_name'          => $this->hash_name,
@@ -58,20 +65,21 @@ class LaraFilesHandler {
             'larafilesable_id'   => $id,
             'description'        => $this->description,
             'author_id'          => !is_null($this->author) ?: $this->author->id,
+            'storage'            => $this->storage,
         ];
     }
 
     /**
-     * Creates a directory
-     *
+     * Create a directory
      */
-    public function createFolder() {
+    public function createDirectory() {
 
+        $fullPath = LaraFilesHandler::setPath($this->storage, $this->path, TRUE);
         try {
             try {
-                File::makeDirectory($this->path, 0777, TRUE);
+                File::makeDirectory($fullPath, 0755, TRUE);
             } catch (\Exception $exception) {
-                throw new \Exception("Couldn't create $this->path");
+                throw new \Exception("Couldn't create $fullPath");
                 $this->setExceptionError($exception);
             }
         } catch (\Exception $exception) {
@@ -85,8 +93,10 @@ class LaraFilesHandler {
      */
     public function setPermission() {
 
-        if (!File::isWritable($this->path)) {
-            File::chmod($this->path, 0777);
+        if (!File::isWritable(LaraFilesHandler::setPath($this->storage, $this->path, TRUE))) {
+            if (!File::chmod(LaraFilesHandler::setPath($this->storage, $this->path, TRUE), 0755)) {
+                $this->setError("Couldn't change folder permission!");
+            }
         }
     }
 
@@ -95,10 +105,10 @@ class LaraFilesHandler {
      */
     public function ifFolderExist() {
 
-        if (File::exists($this->path)) {
+        if (File::exists(LaraFilesHandler::setPath($this->storage, $this->path, TRUE))) {
             $this->setPermission();
         } else {
-            $this->createFolder();
+            $this->createDirectory();
         }
 
         return $this->hasError();
@@ -109,7 +119,7 @@ class LaraFilesHandler {
      *
      * @param \Illuminate\Http\UploadedFile $file
      *
-     * @return LaraFilesHandler
+     * @return bool|LaraFilesHandler
      */
     public function addFile(UploadedFile $file = NULL) {
 
@@ -120,17 +130,18 @@ class LaraFilesHandler {
                 $this->setExtension($file);
                 if (!$this->hasError()) {
                     try {
-                        $file->move($this->path, $this->hash_name . '.' . $file->getClientOriginalExtension());
+                        $file->move(LaraFilesHandler::setPath($this->storage, $this->path, TRUE), $this->hash_name . '.' . $file->getClientOriginalExtension());
                     } catch (\Exception $exception) {
                         $this->setExceptionError($exception);
                     }
                 }
 
-                return $this;
             }
         } else {
             $this->setError("File not provided!");
         }
+
+        return $this->hasError();
     }
 
     /**
@@ -180,6 +191,14 @@ class LaraFilesHandler {
     }
 
     /**
+     * @param null $message
+     */
+    public function setError($message = NULL) {
+
+        $this->error = $message;
+    }
+
+    /**
      * @param Exception $exception
      */
     public function setExceptionError(Exception $exception) {
@@ -188,13 +207,48 @@ class LaraFilesHandler {
     }
 
     /**
-     * @param null $message
+     * @param bool   $storage
+     * @param string $path
+     * @param bool   $fullPath
+     *
+     * @return string
      */
-    public function setError($message = NULL) {
+    public static function setPath($storage, $path, $fullPath = FALSE) {
 
-        $this->error = $message;
+        if ($fullPath) {
+            if ($storage) {
+                return storage_path($path);
+            } else {
+                return public_path($path);
+            }
+        } else {
+            return $path;
+        }
     }
 
+    /**
+     * has error
+     *
+     * @return bool
+     */
+    public function hasError() {
+
+        if ($this->error) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    /**
+     * get error
+     *
+     * @return bool
+     */
+    public function getError() {
+
+        return $this->error;
+    }
     /**
      * Handles removal of file
      *
@@ -215,38 +269,6 @@ class LaraFilesHandler {
     //
     //        return $this->isSuccess();
     //    }
-    /**
-     * Sets a new upload path
-     *
-     * @param $path
-     *
-     * @return $this
-     */
-    public static function uploadPath($path) {
-
-        $obj       = new static();
-        $obj->path = $path;
-        if ($obj->path) {
-            File::makeDirectory($obj->path, 0777, TRUE, TRUE);
-        }
-
-        return $obj;
-    }
-
-    /**
-     * has error
-     *
-     * @return bool
-     */
-    public function hasError() {
-
-        if ($this->error) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
-    }
-
     //    /**
     //     * set error
     //     *

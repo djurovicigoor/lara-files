@@ -2,7 +2,6 @@
 
 namespace DjurovicIgoor\LaraFiles;
 
-use function dd;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -29,7 +28,7 @@ class LaraFile extends Model {
      *
      * @var array
      */
-    protected $appends = ['url'];
+    protected $appends = ['url', 'dataPath'];
 
     /**
      * The attributes that are mass assignable.
@@ -89,8 +88,26 @@ class LaraFile extends Model {
      * @return string
      */
     public function getUrlAttribute() {
-//        dd($this->larafilesable()->first()->useNameHashing());
-        return url('/') . '/' . $this->attributes['path'] . '/' . $this->attributes['hash_name'] . '.' . $this->attributes['extension'];
+
+        if (!$this->storage) {
+            return config('lara-files.default_url') . '/' . $this->attributes['path'] . '/' . $this->attributes['hash_name'] . '.' . $this->attributes['extension'];
+        } else {
+            return NULL;
+        }
+    }
+
+    /**
+     * Return full url to the file
+     *
+     * @return string
+     */
+    public function getDataPathAttribute() {
+
+        if ($this->storage) {
+            return storage_path($this->attributes['path'] . '/' . $this->attributes['hash_name'] . '.' . $this->attributes['extension']);
+        } else {
+            return public_path($this->attributes['path'] . '/' . $this->attributes['hash_name'] . '.' . $this->attributes['extension']);
+        }
     }
 
 }
