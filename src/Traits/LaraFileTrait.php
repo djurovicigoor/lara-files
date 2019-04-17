@@ -8,7 +8,7 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
-use function dd;
+use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler;
 use DjurovicIgoor\LaraFiles\LaraFile;
 
@@ -16,7 +16,7 @@ use DjurovicIgoor\LaraFiles\LaraFile;
  * @property null laraFileError
  */
 trait LaraFileTrait {
-
+    
     public $laraFileError;
     //
     //    /**
@@ -35,37 +35,56 @@ trait LaraFileTrait {
      * @return mixed
      */
     public function __call($method, $arguments) {
-
+        
         if (!empty(config('lara-files.types'))) {
             foreach (config('lara-files.types') as $value) {
-
+                
                 if (in_array($method, [$value])) {
                     return $this->morphOne(LaraFile::class, 'larafilesable')->where('type', $value);
                 }
             }
             foreach (config('lara-files.types') as $value) {
-
+                
                 if (in_array($method, [str_plural($value)])) {
                     return $this->morphMany(LaraFile::class, 'larafilesable')->where('type', $value);
                 }
             }
             foreach (config('lara-files.types') as $value) {
-
+                
                 if (in_array($method, ['get' . ucwords($value)])) {
                     return $this->morphOne(LaraFile::class, 'larafilesable')->where('type', $value)->first();
                 }
             }
             foreach (config('lara-files.types') as $value) {
-
+                
                 if (in_array($method, ['get' . str_plural(ucwords($value))])) {
                     return $this->morphMany(LaraFile::class, 'larafilesable')->where('type', $value)->get();
                 }
             }
         }
-
+        
         return parent::__call($method, $arguments);
     }
-
+    
+    public function addFile($disk) {
+        
+        $this->diskIsValid($disk);
+        $this->getModelPath();
+    }
+    
+    private function diskIsValid($disk) {
+        
+        throw_unless(array_key_exists($disk, config('filesystems.disks')), new UnsupportedDiskAdapterException("Disk \"{$disk}\" is not supported! Please check your \"config/filesistems.php\" for disk drivers."), NULL);
+    }
+    
+    /**
+     * @return string
+     */
+    public function getModelPath() {
+        
+        return config('lara-files.default_folder') . '/' . strtolower(class_basename($this));
+    }
+    
     //    public function getRelationValue($key)
     //    {
     //        // If the key already exists in the relationships array, it just means the
@@ -92,8 +111,8 @@ trait LaraFileTrait {
      * @return LaraFileTrait|void
      * @throws \Exception
      */
-    public function addFile($file, $storage = NULL, $type = NULL, $description = NULL, $user = NULL) {
-
+    public function addFileOld($file, $storage = NULL, $type = NULL, $description = NULL, $user = NULL) {
+        
         $laraFilesHandler = new LaraFilesHandler($this->getModelPath(), $this->useStorage($storage), $type, $description, $user);
         if ($laraFilesHandler->addFile($file)) {
             $this->laraFileError = $laraFilesHandler;
@@ -102,7 +121,7 @@ trait LaraFileTrait {
             $this->laraFiles()->save($this->storeFile($laraFilesHandler->toArray(get_class(), $this->id)));
         }
     }
-
+    
     /**
      * @param      $files
      * @param null $storage
@@ -114,14 +133,13 @@ trait LaraFileTrait {
      * @throws \Exception
      */
     public function addFiles($files, $storage = NULL, $type = NULL, $description = NULL, $user = NULL) {
-
-
+        
         if (!is_array($files)) {
             $files = [$files];
         }
         $files = collect($files);
-        $files->each(function ($file) use ($storage, $description, $user, $type) {
-
+        $files->each(function($file) use ($storage, $description, $user, $type) {
+            
             $laraFilesHandler = new LaraFilesHandler($this->getModelPath(), $this->useStorage($storage), $type, $description, $user);
             if ($laraFilesHandler->addFile($file)) {
                 $this->laraFileError = $laraFilesHandler;
@@ -131,55 +149,47 @@ trait LaraFileTrait {
             }
         });
     }
-
-    /**
-     *
-     * @return string
-     */
-    public function getModelPath() {
-
-        return config('lara-files.default_folder') . '/' . strtolower(class_basename($this));
-    }
-
+    
+    
     public function getFullSavePath() {
-
+        
         LaraFilesHandler::setPath($this->useStorage(), $this->getModelPath());
     }
-
+    
     /**
      * @param $data
      *
      * @return \DjurovicIgoor\LaraFiles\LaraFile
      */
     public function storeFile($data) {
-
+        
         return new LaraFile($data);
     }
-
+    
     /**
      * @return bool
      */
     public function useNameHashing() {
-
+        
         return (isset($this->laraFilesNameHashing)) ? $this->laraFilesNameHashing : config('lara-files.name_hashing');
     }
-
+    
     /**
      * @param $storage
      *
      * @return bool
      */
     public function useStorage($storage) {
-
+        
         return isset($storage) ? $storage : ((isset($this->laraFilesStorage)) ? ($this->laraFilesStorage) : (config('lara-files.storage')));
     }
-
+    
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function laraFiles() {
-
+        
         return $this->morphMany(LaraFile::class, 'larafilesable');
     }
-
+    
 }

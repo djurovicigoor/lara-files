@@ -2,8 +2,10 @@
 
 namespace DjurovicIgoor\LaraFiles\Commands;
 
+use function dd;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
+use function in_array;
 
 class PreInstallCheck extends Command {
     
@@ -17,7 +19,7 @@ class PreInstallCheck extends Command {
      * The console command description.
      * @var string
      */
-    protected $description = 'Lara-files pre install sc';
+    protected $description = 'Lara-files pre install script';
     
     /**
      * Create a new command instance.
@@ -33,6 +35,8 @@ class PreInstallCheck extends Command {
      * @return mixed
      */
     public function handle() {
+    
+    
         $driver = 'DOSpaces';
         if (!Storage::disk($driver)->exists('lara-files')) {
             Storage::disk($driver)->makeDirectory('lara-files');
