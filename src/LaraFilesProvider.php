@@ -32,7 +32,7 @@ class LaraFilesProvider extends ServiceProvider {
      * @return void
      */
     public function register() {
-        
+                $this->app->register(Aws\Laravel\AwsServiceProvider::class);
         $this->commands([
             PreInstallCheck::class,
         ]);
