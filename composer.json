@@ -32,7 +32,7 @@
         "laravel": {
             "providers": [
                 "DjurovicIgoor\\LaraFiles\\ServiceProvider"
-            ],
+            ]
         }
     }
 }
