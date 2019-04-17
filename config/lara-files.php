@@ -12,18 +12,16 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'name_hashing'      => TRUE,
-
+    'name_hashing'   => TRUE,
     /*
     |--------------------------------------------------------------------------
     | Default storage
     |--------------------------------------------------------------------------
     |
-    | TRUE  => use storage_path()
-    | FALSE => use public_path()
+    | TRUE  => Files are accessible through browser
+    | FALSE => Files are not accessible through browser
     */
-    'storage'        => TRUE,
-
+    'public'         => TRUE,
     /*
     |--------------------------------------------------------------------------
     | Type of files - relations
@@ -64,5 +62,5 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'default_url' => url('/'),
+    'default_url'    => env('APP_URL'),
 ];
