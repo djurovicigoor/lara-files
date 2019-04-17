@@ -33,9 +33,6 @@
             "providers": [
                 "DjurovicIgoor\\LaraFiles\\ServiceProvider"
             ],
-//            "aliases": {
-//                "Debugbar": "Barryvdh\\Debugbar\\Facade"
-//            }
         }
     }
 }
