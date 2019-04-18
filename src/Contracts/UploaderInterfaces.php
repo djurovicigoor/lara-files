@@ -12,21 +12,20 @@ interface UploaderInterfaces {
     
     /**
      * @param $file
-     *
-     * @return mixed
      */
-    public function move($file);
+    public function putFile($file);
     
     /**
      * @param $file
      *
-     * @return mixed
+     * @return string
      */
     function getFileExtension($file);
+    
     /**
      * @param $file
      *
-     * @return mixed
+     * @return string
      */
     function getFileOriginalName($file);
     

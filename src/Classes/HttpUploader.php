@@ -23,9 +23,7 @@ class HttpUploader extends Uploader implements UploaderInterfaces {
      * @param $disk
      * @param $path
      * @param $type
-     * @param $visibility
-     * @param $user
-     * @param $description
+     * @param $additionalParameters
      */
     public function __construct($disk, $path, $type, $additionalParameters) {
         
@@ -37,7 +35,7 @@ class HttpUploader extends Uploader implements UploaderInterfaces {
      *
      * @return mixed|void
      */
-    public function move($file) {
+    public function putFile($file) {
         
         $this->getFileOriginalName($file);
         Storage::disk($this->laraFile->disk)->put("{$this->laraFile->path}/{$this->generateHashName()}.{$this->getFileExtension($file)}", File::get($file));
@@ -47,7 +45,7 @@ class HttpUploader extends Uploader implements UploaderInterfaces {
     /**
      * @param $file
      *
-     * @return mixed
+     * @return string
      */
     public function getFileExtension($file) {
         
@@ -57,7 +55,7 @@ class HttpUploader extends Uploader implements UploaderInterfaces {
     /**
      * @param $file
      *
-     * @return mixed
+     * @return string
      */
     public function getFileOriginalName($file) {
         

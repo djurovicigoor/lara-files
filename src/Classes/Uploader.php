@@ -20,9 +20,7 @@ abstract class Uploader {
      * @param $disk
      * @param $path
      * @param $type
-     * @param $visibility
-     * @param $user
-     * @param $description
+     * @param $additionalParameters
      */
     public function __construct($disk, $path, $type, $additionalParameters) {
         

@@ -1,9 +1,12 @@
 <?php
 /**
+ * config/lara-files.php
+ * Lara-files configuration file.
  * Created by PhpStorm.
- * User: djurovic
  * Date: 20.11.17.
  * Time: 19.45
+ * @package Lara-files
+ * @author  Djurovic Igor djurovic.igoor@gmail.com
  */
 return [
     /*

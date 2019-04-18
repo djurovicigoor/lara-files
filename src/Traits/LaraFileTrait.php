@@ -8,6 +8,7 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
+use DjurovicIgoor\LaraFiles\Classes\Base64Uploader;
 use DjurovicIgoor\LaraFiles\Classes\HttpUploader;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler;
@@ -78,7 +79,7 @@ trait LaraFileTrait {
         
         $this->diskIsValid($disk);
         $fileMove = new HttpUploader($disk, $this->getModelPath(), $type, $additionalParameters);
-        $fileMove->move($file);
+        $fileMove->putFile($file);
         $this->laraFiles()->save($fileMove->laraFile);
     }
     
@@ -91,15 +92,51 @@ trait LaraFileTrait {
      */
     public function uploadHttpFiles($disk, $files, $type, $additionalParameters = []) {
         
+        $this->diskIsValid($disk);
         if (!is_array($files)) {
             $files = [$files];
         }
         $files = collect($files);
         foreach ($files as $file) {
             
-            $this->diskIsValid($disk);
             $fileMove = new HttpUploader($disk, $this->getModelPath(), $type, $additionalParameters);
-            $fileMove->move($file);
+            $fileMove->putFile($file);
+            $this->laraFiles()->save($fileMove->laraFile);
+        }
+    }
+    
+    /**
+     * @param              $disk
+     * @param UploadedFile $file
+     * @param              $type
+     *
+     * @throws \Throwable
+     */
+    public function uploadBase64File($disk, $base64File, $type, $additionalParameters = []) {
+        
+        $this->diskIsValid($disk);
+        $fileMove = new Base64Uploader($disk, $this->getModelPath(), $type, $additionalParameters);
+        $fileMove->putFile($base64File);
+        $this->laraFiles()->save($fileMove->laraFile);
+    }
+    
+    /**
+     * @param              $disk
+     * @param UploadedFile $file
+     * @param              $type
+     *
+     * @throws \Throwable
+     */
+    public function uploadBase64Files($disk, $base64Files, $type, $additionalParameters = []) {
+        
+        $this->diskIsValid($disk);
+        if (!is_array($base64Files)) {
+            $base64Files = [$base64Files];
+        }
+        $base64Files = collect($base64Files);
+        foreach ($base64Files as $base64File) {
+            $fileMove = new Base64Uploader($disk, $this->getModelPath(), $type, $additionalParameters);
+            $fileMove->putFile($base64File);
             $this->laraFiles()->save($fileMove->laraFile);
         }
     }

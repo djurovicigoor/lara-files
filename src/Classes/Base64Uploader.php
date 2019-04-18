@@ -1,15 +1,17 @@
 <?php
 /**
+ * Classes/Base64Uploader.php
+ * Class for upload base64 images.
  * Created by PhpStorm.
- * User: djurovic
- * Date: 2019-04-18
- * Time: 09:20
+ * Date: 17.04.19.
+ * Time: 19.45
+ * @package Lara-files
+ * @author  Djurovic Igor djurovic.igoor@gmail.com
  */
 
 namespace DjurovicIgoor\LaraFiles\Classes;
 
 use DjurovicIgoor\LaraFiles\Contracts\UploaderInterfaces;
-use DjurovicIgoor\LaraFiles\LaraFile;
 use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
 use Illuminate\Support\Facades\Storage;
 
@@ -789,34 +791,38 @@ class Base64Uploader extends Uploader implements UploaderInterfaces {
     ];
     
     /**
-     * Base64File constructor.
+     * Base64Uploader constructor.
      *
      * @param $disk
      * @param $path
      * @param $type
-     * @param $visibility
-     * @param $user
-     * @param $description
+     * @param $additionalParameters
      */
-    public function __construct($disk, $path, $type, $visibility, $user, $description) {
+    public function __construct($disk, $path, $type, $additionalParameters) {
         
-        parent::__construct($disk, $path, $type, $visibility, $user, $description);
+        parent::__construct($disk, $path, $type, $additionalParameters);
     }
     
     /**
      * @param $file
      */
-    public function move($file) {
+    public function putFile($file) {
         
-        Storage::disk($this->laraFile->disk)->put("{$this->laraFile->path}/{$this->generateHashName()}.{$this->getFileExtension($file)} ", base64_decode($file));
-        Storage::disk($this->laraFile->disk)->setVisibility("{$this->laraFile->path}/{$this->laraFile->hash_name}.{$this->laraFile->extension}", $this->laraFile->visibility);
+        $this->getFileOriginalName($file);
+        $this->storeToTempFolder($file);
+        $tempFile = Storage::disk('local')->get('lara-files/temp/tempfile.' . $this->getFileExtension($file));
+        if ($tempFile) {
+            if (Storage::disk($this->laraFile->disk)->put("{$this->laraFile->path}/{$this->generateHashName()}.{$this->getFileExtension($file)}", $tempFile)) {
+                Storage::disk('local')->delete('lara-files/temp/tempfile.' . $this->getFileExtension($file));
+            }
+            Storage::disk($this->laraFile->disk)->setVisibility("{$this->laraFile->path}/{$this->laraFile->hash_name}.{$this->laraFile->extension}", $this->laraFile->visibility);
+        }
     }
     
     /**
      * @param $file
-     *                           =
      *
-     * @return mixed|null
+     * @return string|null
      */
     public function getFileExtension($file) {
         
@@ -826,9 +832,9 @@ class Base64Uploader extends Uploader implements UploaderInterfaces {
     /**
      * @param $file
      *
-     * @return mixed
+     * @return NULL
      */
-    function getFileOriginalName($file) {
+    public function getFileOriginalName($file) {
         
         return $this->laraFile->name = NULL;
     }
@@ -836,9 +842,9 @@ class Base64Uploader extends Uploader implements UploaderInterfaces {
     /**
      * @param $mimeType
      *
-     * @return mixed|null
+     * @return string|NULL
      */
-    protected function guessExtension($mimeType) {
+    public function guessExtension($mimeType) {
         
         if (isset(self::MIME_TYPES[ $mimeType ])) {
             return self::MIME_TYPES[ $mimeType ];
@@ -851,10 +857,23 @@ class Base64Uploader extends Uploader implements UploaderInterfaces {
     /**
      * @param $base64String
      *
-     * @return mixed
+     * @return string
      */
-    protected function explodeBase64String($base64String) {
+    public function explodeBase64String($base64String) {
         
         return explode(':', substr($base64String, 0, strpos($base64String, ';')))[1];
+    }
+    
+    /**
+     * @param $file
+     */
+    public function storeToTempFolder($file) {
+        
+        if (!Storage::exists('lara-files/temp')) {
+            Storage::makeDirectory('lara-files/temp');
+        }
+        $newFile = fopen(storage_path('app/lara-files/temp/tempfile.' . $this->getFileExtension($file)), 'wb');
+        fwrite($newFile, base64_decode(explode(',', $file)[1]));
+        fclose($newFile);
     }
 }
