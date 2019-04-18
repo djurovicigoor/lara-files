@@ -8,12 +8,12 @@
 
 namespace DjurovicIgoor\LaraFiles\Classes;
 
-use DjurovicIgoor\LaraFiles\Contracts\MoveFileInterfaces;
+use DjurovicIgoor\LaraFiles\Contracts\UploaderInterfaces;
 use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
-class HttpFile extends UploadFile implements MoveFileInterfaces {
+class HttpUploader extends Uploader implements UploaderInterfaces {
     
     use HashNameTrait;
     

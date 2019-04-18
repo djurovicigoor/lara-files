@@ -10,7 +10,7 @@ namespace DjurovicIgoor\LaraFiles\Classes;
 
 use DjurovicIgoor\LaraFiles\LaraFile;
 
-abstract class UploadFile {
+abstract class Uploader {
     
     public $laraFile;
     

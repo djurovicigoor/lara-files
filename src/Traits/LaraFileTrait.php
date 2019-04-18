@@ -8,7 +8,7 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
-use DjurovicIgoor\LaraFiles\Classes\HttpFile;
+use DjurovicIgoor\LaraFiles\Classes\HttpUploader;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler;
 use DjurovicIgoor\LaraFiles\LaraFile;
@@ -19,7 +19,6 @@ use Illuminate\Http\UploadedFile;
  */
 trait LaraFileTrait {
     
-    public $laraFileError;
     //
     //    /**
     //     * LaraFileTrait constructor.
@@ -78,9 +77,31 @@ trait LaraFileTrait {
     public function uploadHttpFile($disk, UploadedFile $file, $type, $additionalParameters = []) {
         
         $this->diskIsValid($disk);
-        $fileMove = new HttpFile($disk, $this->getModelPath(), $type, $additionalParameters);
+        $fileMove = new HttpUploader($disk, $this->getModelPath(), $type, $additionalParameters);
         $fileMove->move($file);
         $this->laraFiles()->save($fileMove->laraFile);
+    }
+    
+    /**
+     * @param              $disk
+     * @param UploadedFile $file
+     * @param              $type
+     *
+     * @throws \Throwable
+     */
+    public function uploadHttpFiles($disk, $files, $type, $additionalParameters = []) {
+        
+        if (!is_array($files)) {
+            $files = [$files];
+        }
+        $files = collect($files);
+        foreach ($files as $file) {
+            
+            $this->diskIsValid($disk);
+            $fileMove = new HttpUploader($disk, $this->getModelPath(), $type, $additionalParameters);
+            $fileMove->move($file);
+            $this->laraFiles()->save($fileMove->laraFile);
+        }
     }
     
     /**
@@ -117,83 +138,6 @@ trait LaraFileTrait {
     //            return $this->getRelationshipFromMethod($key);
     //        }
     //    }
-    /**
-     * @param      $file
-     * @param null $storage
-     * @param null $description
-     * @param null $user
-     * @param int  $type
-     *
-     * @return LaraFileTrait|void
-     * @throws \Exception
-     */
-    public function addFileOld($file, $storage = NULL, $type = NULL, $description = NULL, $user = NULL) {
-        
-        $laraFilesHandler = new LaraFilesHandler($this->getModelPath(), $this->useStorage($storage), $type, $description, $user);
-        if ($laraFilesHandler->addFile($file)) {
-            $this->laraFileError = $laraFilesHandler;
-        } else {
-            $this->laraFileError = $laraFilesHandler;
-            $this->laraFiles()->save($this->storeFile($laraFilesHandler->toArray(get_class(), $this->id)));
-        }
-    }
-    
-    /**
-     * @param      $files
-     * @param null $storage
-     * @param null $description
-     * @param null $user
-     * @param int  $type
-     *
-     * @return void
-     * @throws \Exception
-     */
-    public function addFiles($files, $storage = NULL, $type = NULL, $description = NULL, $user = NULL) {
-        
-        if (!is_array($files)) {
-            $files = [$files];
-        }
-        $files = collect($files);
-        $files->each(function($file) use ($storage, $description, $user, $type) {
-            
-            $laraFilesHandler = new LaraFilesHandler($this->getModelPath(), $this->useStorage($storage), $type, $description, $user);
-            if ($laraFilesHandler->addFile($file)) {
-                $this->laraFileError = $laraFilesHandler;
-            } else {
-                $this->laraFileError = $laraFilesHandler;
-                $this->laraFiles()->save($this->storeFile($laraFilesHandler->toArray(get_class(), $this->id)));
-            }
-        });
-    }
-    
-    /**
-     * @param $data
-     *
-     * @return \DjurovicIgoor\LaraFiles\LaraFile
-     */
-    public function storeFile($data) {
-        
-        return new LaraFile($data);
-    }
-    
-    /**
-     * @return bool
-     */
-    public function useNameHashing() {
-        
-        return (isset($this->laraFilesNameHashing)) ? $this->laraFilesNameHashing : config('lara-files.name_hashing');
-    }
-    
-    /**
-     * @param $storage
-     *
-     * @return bool
-     */
-    public function useStorage($storage) {
-        
-        return isset($storage) ? $storage : ((isset($this->laraFilesStorage)) ? ($this->laraFilesStorage) : (config('lara-files.storage')));
-    }
-    
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */

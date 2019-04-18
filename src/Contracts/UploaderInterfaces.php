@@ -8,7 +8,7 @@
 
 namespace DjurovicIgoor\LaraFiles\Contracts;
 
-interface MoveFileInterfaces {
+interface UploaderInterfaces {
     
     /**
      * @param $file
