@@ -24,15 +24,15 @@ abstract class UploadFile {
      * @param $user
      * @param $description
      */
-    public function __construct($disk, $path, $type, $visibility, $user, $description) {
+    public function __construct($disk, $path, $type, $additionalParameters) {
         
         $this->laraFile = new LaraFile([
             'disk'        => $disk,
             'path'        => $path,
             'type'        => $type,
-            'visibility'  => $visibility,
-            'description' => $description,
-            'author_id'   => !is_null($user) ?: $user->id,
+            'visibility'  => array_key_exists('visibility', $additionalParameters) ? $additionalParameters['visibility'] : config('lara-files.public'),
+            'description' => array_key_exists('description', $additionalParameters) ? $additionalParameters['description'] : NULL,
+            'author_id'   => array_key_exists('user', $additionalParameters) ? $additionalParameters['user']->id : NULL,
         ]);
     }
 }

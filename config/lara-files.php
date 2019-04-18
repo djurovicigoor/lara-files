@@ -14,14 +14,14 @@ return [
     | public  => Files are accessible through browser
     | private => Files are not accessible through browser
     */
-    'visibility'         => 'public',
+    'visibility'   => 'public',
     /*
     |--------------------------------------------------------------------------
     | Type of files - relations
     |--------------------------------------------------------------------------
     |
     */
-    'types'          => [
+    'types'        => [
         'file',
         'avatar',
         'thumbnail',
@@ -32,20 +32,12 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'author'         => TRUE,
+    'author'       => TRUE,
     /*
     |--------------------------------------------------------------------------
     | Author model
     |--------------------------------------------------------------------------
     |
     */
-    'author_model'   => "App\User",
-    /*
-    |--------------------------------------------------------------------------
-    | Default folder
-    |--------------------------------------------------------------------------
-    |
-    | Name of root folder for all files.
-    */
-    'default_folder' => "lara-files",
+    'author_model' => "App\User",
 ];

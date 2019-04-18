@@ -27,9 +27,9 @@ class HttpFile extends UploadFile implements MoveFileInterfaces {
      * @param $user
      * @param $description
      */
-    public function __construct($disk, $path, $type, $visibility, $user, $description) {
+    public function __construct($disk, $path, $type, $additionalParameters) {
         
-        parent::__construct($disk, $path, $type, $visibility, $user, $description);
+        parent::__construct($disk, $path, $type, $additionalParameters);
     }
     
     /**

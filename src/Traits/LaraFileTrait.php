@@ -72,16 +72,13 @@ trait LaraFileTrait {
      * @param              $disk
      * @param UploadedFile $file
      * @param              $type
-     * @param              $visibility
-     * @param              $user
-     * @param null         $description
      *
      * @throws \Throwable
      */
-    public function uploadHttpFile($disk, UploadedFile $file, $type, $visibility, $user, $description = NULL) {
+    public function uploadHttpFile($disk, UploadedFile $file, $type, $additionalParameters = []) {
         
         $this->diskIsValid($disk);
-        $fileMove = new HttpFile($disk, $this->getModelPath(), $type, $visibility, $user, $description);
+        $fileMove = new HttpFile($disk, $this->getModelPath(), $type, $additionalParameters);
         $fileMove->move($file);
         $this->laraFiles()->save($fileMove->laraFile);
     }
@@ -101,7 +98,7 @@ trait LaraFileTrait {
      */
     public function getModelPath() {
         
-        return config('lara-files.default_folder') . '/' . strtolower(class_basename($this));
+        return 'lara-files/' . strtolower(class_basename($this));
     }
     
     //    public function getRelationValue($key)
@@ -167,11 +164,6 @@ trait LaraFileTrait {
                 $this->laraFiles()->save($this->storeFile($laraFilesHandler->toArray(get_class(), $this->id)));
             }
         });
-    }
-    
-    public function getFullSavePath() {
-        
-        LaraFilesHandler::setPath($this->useStorage(), $this->getModelPath());
     }
     
     /**

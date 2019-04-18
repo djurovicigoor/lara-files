@@ -3,6 +3,7 @@
 namespace DjurovicIgoor\LaraFiles;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property string  $disk
@@ -35,7 +36,7 @@ class LaraFile extends Model {
      * The accessors to append to the model's array form.
      * @var array
      */
-    protected $appends = ['url'];
+    protected $appends = ['url', 'fullPath'];
     
     /**
      * The attributes that are mass assignable.
@@ -81,9 +82,18 @@ class LaraFile extends Model {
      */
     public function delete() {
         
-        #$fileHandler = new  FileHandler;
-        #$fileHandler->removeFile( public_path( $this->path . '/' . $this->hash_name . '.' . $this->mime) );
+        Storage::disk($this->attributes['disk'])->delete($this->fullPath);
+        
         return parent::delete();
+    }
+    
+    /**
+     * Return full url to the file
+     * @return string
+     */
+    public function getFullPathAttribute() {
+        
+        return "{$this->attributes['path']}/{$this->attributes['hash_name']}.{$this->attributes['extension']}";
     }
     
     /**
@@ -105,7 +115,7 @@ class LaraFile extends Model {
                 break;
             }
             
-            return "{$rootUrl}{$this->attributes['path']}/{$this->attributes['hash_name']}.{$this->attributes['extension']}";
+            return $rootUrl . $this->fullPath;
         } else {
             return NULL;
         }
