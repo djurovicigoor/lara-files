@@ -18,14 +18,14 @@ class CreateLaraFilesTable extends Migration {
             $table->string('disk')->default('public');
             $table->string('path')->nullable();
             $table->string('hash_name')->nullable();
-            $table->string('name')->nullable();
             $table->string('extension')->nullable();
-            $table->string('type')->nullable()->comment('');
-            $table->string('larafilesable_type')->nullable();
-            $table->integer('larafilesable_id')->default(0);
+            $table->string('name')->nullable();
+            $table->string('type')->nullable();
+            $table->string('visibility')->default(config('lara-files.visibility'));
             $table->text('description')->nullable();
             $table->unsignedInteger('author_id')->nullable();
-            $table->string('visibility')->default(config('lara-files.public'));
+            $table->string('larafilesable_type')->nullable();
+            $table->integer('larafilesable_id')->default(0);
             $table->timestamps();
         });
     }

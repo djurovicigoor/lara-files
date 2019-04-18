@@ -8,20 +8,13 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Use hash name
-    |--------------------------------------------------------------------------
-    |
-    */
-    'name_hashing'   => TRUE,
-    /*
-    |--------------------------------------------------------------------------
     | Default storage
     |--------------------------------------------------------------------------
     |
-    | TRUE  => Files are accessible through browser
-    | FALSE => Files are not accessible through browser
+    | public  => Files are accessible through browser
+    | private => Files are not accessible through browser
     */
-    'public'         => 'public',
+    'visibility'         => 'public',
     /*
     |--------------------------------------------------------------------------
     | Type of files - relations
@@ -52,15 +45,7 @@ return [
     | Default folder
     |--------------------------------------------------------------------------
     |
-    | TRUE  => use storage_path()
-    | FALSE => use public_path()
+    | Name of root folder for all files.
     */
     'default_folder' => "lara-files",
-    /*
-    |--------------------------------------------------------------------------
-    | Default url
-    |--------------------------------------------------------------------------
-    |
-    */
-    'default_url'    => env('APP_URL'),
 ];
