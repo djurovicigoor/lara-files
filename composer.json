@@ -27,5 +27,12 @@
         "psr-4": {
             "DjurovicIgoor\\LaraFiles\\": "src"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DjurovicIgoor\\LaraFiles\\LaraFilesProvider"
+            ]
+        }
     }
 }
