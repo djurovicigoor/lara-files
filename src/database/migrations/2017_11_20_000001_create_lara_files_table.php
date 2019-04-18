@@ -20,12 +20,12 @@ class CreateLaraFilesTable extends Migration {
             $table->string('hash_name')->nullable();
             $table->string('name')->nullable();
             $table->string('extension')->nullable();
-            $table->string('type')->nullable()->comment();
+            $table->string('type')->nullable()->comment('');
             $table->string('larafilesable_type')->nullable();
             $table->integer('larafilesable_id')->default(0);
             $table->text('description')->nullable();
             $table->unsignedInteger('author_id')->nullable();
-            $table->boolean('public')->default(config('lara-files.public'));
+            $table->string('visibility')->default(config('lara-files.public'));
             $table->timestamps();
         });
     }

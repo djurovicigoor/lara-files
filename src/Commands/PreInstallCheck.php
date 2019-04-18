@@ -2,10 +2,8 @@
 
 namespace DjurovicIgoor\LaraFiles\Commands;
 
-use function dd;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
-use function in_array;
 
 class PreInstallCheck extends Command {
     
@@ -35,8 +33,7 @@ class PreInstallCheck extends Command {
      * @return mixed
      */
     public function handle() {
-    
-    
+        
         $driver = 'DOSpaces';
         if (!Storage::disk($driver)->exists('lara-files')) {
             Storage::disk($driver)->makeDirectory('lara-files');
@@ -45,9 +42,8 @@ class PreInstallCheck extends Command {
             } else {
                 $this->error('Package folder not created!');
             }
-        } else{
+        } else {
             $this->info('Package folder already exist!¬');
-    
         }
     }
 }

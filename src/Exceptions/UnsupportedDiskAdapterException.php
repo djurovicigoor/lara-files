@@ -2,6 +2,8 @@
 
 namespace DjurovicIgoor\LaraFiles\Exceptions;
 
+use Throwable;
+
 class UnsupportedDiskAdapterException extends \Exception {
     
     /**

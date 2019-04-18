@@ -10,6 +10,24 @@ namespace DjurovicIgoor\LaraFiles\Contracts;
 
 interface MoveFileInterfaces {
     
-    public function move();
+    /**
+     * @param $file
+     *
+     * @return mixed
+     */
+    public function move($file);
+    
+    /**
+     * @param $file
+     *
+     * @return mixed
+     */
+    function getFileExtension($file);
+    /**
+     * @param $file
+     *
+     * @return mixed
+     */
+    function getFileOriginalName($file);
     
 }

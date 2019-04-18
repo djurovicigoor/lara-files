@@ -9,10 +9,58 @@
 namespace DjurovicIgoor\LaraFiles\Classes;
 
 use DjurovicIgoor\LaraFiles\Contracts\MoveFileInterfaces;
+use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
-class HttpFile implements MoveFileInterfaces {
+class HttpFile extends UploadFile implements MoveFileInterfaces {
     
-    public function move() {
-        // TODO: Implement move() method.
+    use HashNameTrait;
+    
+    /**
+     * HttpFile constructor.
+     *
+     * @param $disk
+     * @param $path
+     * @param $type
+     * @param $visibility
+     * @param $user
+     * @param $description
+     */
+    public function __construct($disk, $path, $type, $visibility, $user, $description) {
+        
+        parent::__construct($disk, $path, $type, $visibility, $user, $description);
+    }
+    
+    /**
+     * @param $file
+     *
+     * @return mixed|void
+     */
+    public function move($file) {
+        
+        $this->getFileOriginalName($file);
+        Storage::disk($this->laraFile->disk)->put("{$this->laraFile->path}/{$this->generateHashName()}.{$this->getFileExtension($file)}", File::get($file));
+        Storage::disk($this->laraFile->disk)->setVisibility("{$this->laraFile->path}/{$this->laraFile->hash_name}.{$this->laraFile->extension}", $this->laraFile->visibility);
+    }
+    
+    /**
+     * @param $file
+     *
+     * @return mixed
+     */
+    public function getFileExtension($file) {
+        
+        return $this->laraFile->extension = $file->getClientOriginalExtension();
+    }
+    
+    /**
+     * @param $file
+     *
+     * @return mixed
+     */
+    public function getFileOriginalName($file) {
+        
+        return $this->laraFile->name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);;
     }
 }

@@ -5,7 +5,13 @@ namespace DjurovicIgoor\LaraFiles;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string $url
+ * @property string  $url
+ * @property mixed   disk
+ * @property  string extension
+ * @property mixed   path
+ * @property mixed   name
+ * @property mixed   hash_name
+ * @property mixed   visibility
  */
 class LaraFile extends Model {
 
@@ -36,6 +42,7 @@ class LaraFile extends Model {
      * @var array
      */
     protected $fillable = [
+        'disk',
         'path',
         'hash_name',
         'name',
@@ -44,7 +51,7 @@ class LaraFile extends Model {
         'larafilesable_type',
         'larafilesable_id',
         'description',
-        'storage',
+        'visibility',
         'author_id',
     ];
 

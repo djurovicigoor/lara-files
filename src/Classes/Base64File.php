@@ -9,8 +9,13 @@
 namespace DjurovicIgoor\LaraFiles\Classes;
 
 use DjurovicIgoor\LaraFiles\Contracts\MoveFileInterfaces;
+use DjurovicIgoor\LaraFiles\LaraFile;
+use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
+use Illuminate\Support\Facades\Storage;
 
-class Base64File implements MoveFileInterfaces {
+class Base64File extends UploadFile implements MoveFileInterfaces {
+    
+    use HashNameTrait;
     
     const MIME_TYPES = [
         'application/andrew-inset'                                                  => 'ez',
@@ -784,11 +789,48 @@ class Base64File implements MoveFileInterfaces {
     ];
     
     /**
+     * Base64File constructor.
      *
+     * @param $disk
+     * @param $path
+     * @param $type
+     * @param $visibility
+     * @param $user
+     * @param $description
      */
-    public function move() {
+    public function __construct($disk, $path, $type, $visibility, $user, $description) {
         
-        $this->guessExtension($this->explodeBase64String(''));
+        parent::__construct($disk, $path, $type, $visibility, $user, $description);
+    }
+    
+    /**
+     * @param $file
+     */
+    public function move($file) {
+        
+        Storage::disk($this->laraFile->disk)->put("{$this->laraFile->path}/{$this->generateHashName()}.{$this->getFileExtension($file)} ", base64_decode($file));
+        Storage::disk($this->laraFile->disk)->setVisibility("{$this->laraFile->path}/{$this->laraFile->hash_name}.{$this->laraFile->extension}", $this->laraFile->visibility);
+    }
+    
+    /**
+     * @param $file
+     *                           =
+     *
+     * @return mixed|null
+     */
+    public function getFileExtension($file) {
+        
+        return $this->laraFile->extension = $this->guessExtension($this->explodeBase64String($file));
+    }
+    
+    /**
+     * @param $file
+     *
+     * @return mixed
+     */
+    function getFileOriginalName($file) {
+        
+        return $this->laraFile->name = NULL;
     }
     
     /**

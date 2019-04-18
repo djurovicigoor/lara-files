@@ -8,9 +8,11 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
+use DjurovicIgoor\LaraFiles\Classes\HttpFile;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Helpers\LaraFilesHandler;
 use DjurovicIgoor\LaraFiles\LaraFile;
+use Illuminate\Http\UploadedFile;
 
 /**
  * @property null laraFileError
@@ -66,12 +68,29 @@ trait LaraFileTrait {
         return parent::__call($method, $arguments);
     }
     
-    public function addFile($disk) {
+    /**
+     * @param              $disk
+     * @param UploadedFile $file
+     * @param              $type
+     * @param              $visibility
+     * @param              $user
+     * @param null         $description
+     *
+     * @throws \Throwable
+     */
+    public function uploadHttpFile($disk, UploadedFile $file, $type, $visibility, $user, $description = NULL) {
         
         $this->diskIsValid($disk);
-        $this->getModelPath();
+        $fileMove = new HttpFile($disk, $this->getModelPath(), $type, $visibility, $user, $description);
+        $fileMove->move($file);
+        $this->laraFiles()->save($fileMove->laraFile);
     }
     
+    /**
+     * @param $disk
+     *
+     * @throws \Throwable
+     */
     private function diskIsValid($disk) {
         
         throw_unless(array_key_exists($disk, config('filesystems.disks')), new UnsupportedDiskAdapterException("Disk \"{$disk}\" is not supported! Please check your \"config/filesistems.php\" for disk drivers."), NULL);
@@ -149,7 +168,6 @@ trait LaraFileTrait {
             }
         });
     }
-    
     
     public function getFullSavePath() {
         

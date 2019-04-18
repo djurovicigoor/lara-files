@@ -21,7 +21,7 @@ return [
     | TRUE  => Files are accessible through browser
     | FALSE => Files are not accessible through browser
     */
-    'public'         => TRUE,
+    'public'         => 'public',
     /*
     |--------------------------------------------------------------------------
     | Type of files - relations
