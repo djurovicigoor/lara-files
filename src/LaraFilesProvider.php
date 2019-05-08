@@ -8,7 +8,6 @@
 
 namespace DjurovicIgoor\LaraFiles;
 
-use DjurovicIgoor\LaraFiles\Commands\PreInstallCheck;
 use Illuminate\Support\ServiceProvider;
 
 class LaraFilesProvider extends ServiceProvider {
@@ -34,7 +33,6 @@ class LaraFilesProvider extends ServiceProvider {
     public function register() {
         
         $this->commands([
-            PreInstallCheck::class,
         ]);
         $this->mergeConfigFrom(__DIR__ . '/../config/lara-files.php', 'lara-files');
     }
