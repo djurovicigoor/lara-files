@@ -1,6 +1,6 @@
 {
   "name": "djurovicigoor/lara-files",
-  "description": "Package for easier work with files . . .",
+  "description": "Lara-files is a package which will make it easier to work with files. Package has built-in support for DigitalOcean spaces.",
   "keywords": [
     "files",
     "lara-files",
