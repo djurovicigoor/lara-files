@@ -39,7 +39,7 @@ After that you can create the lara-files table by running the migrations:
 ``` bash
 $ php artisan migrate
 ```
-##LaraFile model and Database schema 
+## LaraFile model and Database schema 
   
 The LaraFile model provides one MorphToMany relation by default.
 If you want to use more than default `laraFile()` relation, you should modify types array in `config/lara-files.php` 
@@ -56,6 +56,22 @@ If you want to use more than default `laraFile()` relation, you should modify ty
     'thumbnail',
 ],
 ```
+You can modify this array as you want, add or remove an item. In this example, I have 3 types.
+For each of those types, package created for you relations between your model and LaraFile model, by default.
+
+If I use an avatar for this example, you have the next relations and properties on your model:
+
+- `avatar()` - Return Morph to One relations query builder
+- `avatars()` - Return Morph to Many relations query builder
+- `getAvatar()` - Return single model of related LaraFile model
+- `getAvatars()` - Return Collection of related LaraFile models
+
+Also, you have lazy loaded relations `avatar` and `avatars` that are doing the same thing as `getAvatar()` and `getAvatars()`  methods.
+```php
+$avatar  = $post->avatar
+$avatars = $post->avatars
+```
+All of those methods and properties are applicable for any type in this types array.
 
 Database schema:
   - disk                - (string)  Disk driver of stored file. 
@@ -111,7 +127,7 @@ class Post extends Model {
 After you successfully set disk drivers you have to run `php artisan storage:link` to link your `storage/app/public` with `public/storage` folder if you want to access files through browser who has 'public' driver or visibility. 
 Now, you have prepared Eloquent Model for using Trait function:
 
-##Trait functions
+## Trait functions
 All functions can be called on an already stored model in the database. 
 The first parameter of all functions is disk adapter one of which you already have defined in your `config/filesistems.php`.
 
@@ -128,60 +144,27 @@ $additionalParameters = [
 ];
 ```
 Every item of the above array is optional. If you want, you can pass an empty array.
-####uploadHttpFile()
+#### uploadHttpFile()
 With this function, you can upload a single HttpUploadedFile file and associate it with your model.
 ```php
 $post = Post::find($id);
 $post->uploadHttpFile('local', $request->file('image'), 'thumbnail', $additionalParameters = [])
 ```
-####uploadHttpFiles()
+#### uploadHttpFiles()
 With this function, you can upload the array of HttpUploadedFile files and associate them with your model.
 ```php
 $post = Post::find($id);
 $post->uploadHttpFiles('local', $arrayOfHttpUploadedFiles, 'thumbnail', $additionalParameters = [])
 ```
-####uploadBase64File()
+#### uploadBase64File()
 With this function, you can upload a single base64 file and associate it with your model.
 ```php
 $post = Post::find($id);
 $post->uploadBase64File('local', $base64String, 'thumbnail', $additionalParameters = [])
 ```
-####uploadBase64Files()
+#### uploadBase64Files()
 With this function, you can upload the array of base64 files and associate them with your model.
 ```php
 $post = Post::find($id);
 $post->uploadBase64Files('local', $arrayOfBase64String, 'thumbnail', $additionalParameters = [])
 ````
-##Access to files
-As I mentioned earlier, you can access files with one default `laraFiles ()` relations, but you can have many more options.
-In `config/lara-files.php` file you can find types array:
-```php
-/*
-|--------------------------------------------------------------------------
-| Type of files - relations
-|--------------------------------------------------------------------------
-|
-*/
-'types'        => [
-    'file',
-    'avatar',
-    'thumbnail',
-],
-```
-You can modify this array as you want, add or remove an item. In this example, I have 3 types.
-For each of those types, package created for you relations between your model and LaraFile model, by default.
-
-If I use an avatar for this example, you have the next relations and properties on your model:
-
-- `avatar()` - Return Morph to One relations query builder
-- `avatars()` - Return Morph to Many relations query builder
-- `getAvatar()` - Return single model of related LaraFile model
-- `getAvatars()` - Return Collection of related LaraFile models
-
-Also, you have lazy loaded relations `avatar` and `avatars` that are doing the same thing as `getAvatar()` and `getAvatars()`  methods.
-```php
-$avatar  = $post->avatar
-$avatars = $post->avatars
-```
-All of those methods and properties are applicable for any type in this types array.
-
