@@ -168,3 +168,29 @@ With this function, you can upload the array of base64 files and associate them 
 $post = Post::find($id);
 $post->uploadBase64Files('local', $arrayOfBase64String, 'thumbnail', $additionalParameters = [])
 ````
+## Change log
+
+Please see the [changelog.md](changelog.md) for more information on what has changed recently.
+
+## Contributing
+
+Please see [contributing.md](contributing.md) for details and a todolist.
+
+## Security
+
+If you discover any security related issues, please email djurovic.igoor@gmail.com instead of using the issue tracker.
+
+## Donate
+
+> If you found this project helpful or you learned something from the source code and want to appreciate
+>
+> - [PayPal](https://paypal.me/djurovicigoor?locale.x=en_US)
+<br>
+
+## Credits
+
+- [Djurovic Igor](https://github.com/djurovicigoor)
+
+## License
+
+MIT. Please see the [license file](license.md) for more information.
