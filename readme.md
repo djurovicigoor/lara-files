@@ -7,7 +7,7 @@
 ![Scrutinizer build (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/build/g/djurovicigoor/lara-files/master.svg?style=for-the-badge)
 
 Lara-files is a package which will make it easier to work with files. Package has built-in support for DigitalOcean spaces.
-This package can be used in Laravel 5.7 or higher.   
+This package can be used in Laravel 5.5 or higher.   
 
 ## Installation 
 You can install the package via composer:
