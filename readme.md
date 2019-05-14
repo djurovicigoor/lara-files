@@ -3,6 +3,8 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/djurovicigoor/lara-files.svg?style=for-the-badge)](https://packagist.org/packages/djurovicigoor/lara-files)
 ![Total Downloads](https://img.shields.io/packagist/dt/djurovicigoor/lara-files.svg?style=for-the-badge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+![Scrutinizer code quality (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/quality/g/djurovicigoor/lara-files/master.svg?style=for-the-badge)
+![Scrutinizer build (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/build/g/djurovicigoor/lara-files/master.svg?style=for-the-badge)
 
 Lara-files is a package which will make it easier to work with files. Package has built-in support for DigitalOcean spaces.
 This package can be used in Laravel 5.7 or higher.   
