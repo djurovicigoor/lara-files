@@ -69,6 +69,7 @@ trait LaraFileTrait {
         // relationship has already been loaded, so we'll just return it out of
         // here because there is no need to query within the relations twice.
         if ($this->relationLoaded($key)) {
+        
             return $this->relations[ $key ];
         }
         // If the "attribute" exists as a method on the model, we will just assume

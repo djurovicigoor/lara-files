@@ -58,7 +58,6 @@ class HttpUploader extends Uploader implements UploaderInterfaces {
      * @return string
      */
     public function getFileOriginalName($file) {
-        
         return $this->laraFile->name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);;
     }
 }

@@ -847,6 +847,7 @@ class Base64Uploader extends Uploader implements UploaderInterfaces {
     public function guessExtension($mimeType) {
         
         if (isset(self::MIME_TYPES[ $mimeType ])) {
+        
             return self::MIME_TYPES[ $mimeType ];
         }
         $loverCaseMimeType = strtolower($mimeType);
