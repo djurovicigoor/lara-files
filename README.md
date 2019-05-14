@@ -182,10 +182,9 @@ If you discover any security related issues, please email djurovic.igoor@gmail.c
 
 ## Donate
 
-> If you found this project helpful or you learned something from the source code and want to appreciate
->
-> - [PayPal](https://paypal.me/djurovicigoor?locale.x=en_US)
-<br>
+If you found this project helpful or you learned something from the source code and want to appreciate
+
+- [PayPal](https://paypal.me/djurovicigoor?locale.x=en_US)
 
 ## Credits
 
