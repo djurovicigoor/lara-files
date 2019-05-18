@@ -8,6 +8,10 @@
 
 Lara-files is a package which will make it easier to work with files. Package has built-in support for DigitalOcean spaces.
 This package can be used in Laravel 5.5 or higher.   
+ 
+<p align="center">
+<img width=500 src="https://cdn-images-1.medium.com/max/2600/1*eNfoy3KrItKc9avrgKyKPQ.jpeg" alt="lara-files preview" />
+</p>
 
 ## Installation 
 You can install the package via composer:
