@@ -11,14 +11,14 @@
 
 namespace DjurovicIgoor\LaraFiles\Classes;
 
-use DjurovicIgoor\LaraFiles\Contracts\UploaderInterfaces;
-use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
 use Illuminate\Support\Facades\Storage;
+use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
+use DjurovicIgoor\LaraFiles\Contracts\UploaderInterfaces;
 
-class Base64Uploader extends Uploader implements UploaderInterfaces {
-    
+class Base64Uploader extends Uploader implements UploaderInterfaces
+{
     use HashNameTrait;
-    
+
     const MIME_TYPES = [
         'application/andrew-inset'                                                  => 'ez',
         'application/applixware'                                                    => 'aw',
@@ -789,7 +789,7 @@ class Base64Uploader extends Uploader implements UploaderInterfaces {
         'video/x-smv'                                                               => 'smv',
         'x-conference/x-cooltalk'                                                   => 'ice',
     ];
-    
+
     /**
      * Base64Uploader constructor.
      *
@@ -798,82 +798,81 @@ class Base64Uploader extends Uploader implements UploaderInterfaces {
      * @param $type
      * @param $additionalParameters
      */
-    public function __construct($disk, $path, $type, $additionalParameters) {
-        
+    public function __construct($disk, $path, $type, $additionalParameters)
+    {
         parent::__construct($disk, $path, $type, $additionalParameters);
     }
-    
+
     /**
      * @param $file
      */
-    public function putFile($file) {
-        
+    public function putFile($file)
+    {
         $this->getFileOriginalName($file);
         $this->storeToTempFolder($file);
-        $tempFile = Storage::disk('local')->get('lara-files/temp/tempfile.' . $this->getFileExtension($file));
+        $tempFile = Storage::disk('local')->get('lara-files/temp/tempfile.'.$this->getFileExtension($file));
         if ($tempFile) {
             if (Storage::disk($this->laraFile->disk)->put("{$this->laraFile->path}/{$this->generateHashName()}.{$this->getFileExtension($file)}", $tempFile)) {
-                Storage::disk('local')->delete('lara-files/temp/tempfile.' . $this->getFileExtension($file));
+                Storage::disk('local')->delete('lara-files/temp/tempfile.'.$this->getFileExtension($file));
             }
             Storage::disk($this->laraFile->disk)->setVisibility("{$this->laraFile->path}/{$this->laraFile->hash_name}.{$this->laraFile->extension}", $this->laraFile->visibility);
         }
     }
-    
+
     /**
      * @param $file
      *
      * @return string|null
      */
-    public function getFileExtension($file) {
-        
+    public function getFileExtension($file)
+    {
         return $this->laraFile->extension = $this->guessExtension($this->explodeBase64String($file));
     }
-    
+
     /**
      * @param $file
      *
      * @return NULL
      */
-    public function getFileOriginalName($file) {
-        
-        return $this->laraFile->name = NULL;
+    public function getFileOriginalName($file)
+    {
+        return $this->laraFile->name = null;
     }
-    
+
     /**
      * @param $mimeType
      *
      * @return string|NULL
      */
-    public function guessExtension($mimeType) {
-        
+    public function guessExtension($mimeType)
+    {
         if (isset(self::MIME_TYPES[ $mimeType ])) {
-        
             return self::MIME_TYPES[ $mimeType ];
         }
         $loverCaseMimeType = strtolower($mimeType);
-        
-        return isset(self::MIME_TYPES[ $loverCaseMimeType ]) ? self::MIME_TYPES[ $loverCaseMimeType ] : NULL;
+
+        return isset(self::MIME_TYPES[ $loverCaseMimeType ]) ? self::MIME_TYPES[ $loverCaseMimeType ] : null;
     }
-    
+
     /**
      * @param $base64String
      *
      * @return string
      */
-    public function explodeBase64String($base64String) {
-        
+    public function explodeBase64String($base64String)
+    {
         return explode(':', substr($base64String, 0, strpos($base64String, ';')))[1];
     }
-    
+
     /**
      * @param $file
      */
-    public function storeToTempFolder($file) {
-        
-        if (!Storage::exists('lara-files/temp')) {
+    public function storeToTempFolder($file)
+    {
+        if ( ! Storage::exists('lara-files/temp')) {
             Storage::makeDirectory('lara-files/temp');
         }
-        $newFile = fopen(storage_path('app/lara-files/temp/tempfile.' . $this->getFileExtension($file)), 'wb');
+        $newFile = fopen(storage_path('app/lara-files/temp/tempfile.'.$this->getFileExtension($file)), 'wb');
         fwrite($newFile, base64_decode(explode(',', $file)[1]));
         fclose($newFile);
     }

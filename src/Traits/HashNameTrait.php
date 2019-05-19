@@ -8,14 +8,13 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
-trait HashNameTrait {
-    
+trait HashNameTrait
+{
     /**
      * @return string
      */
-    public function generateHashName() {
-        
+    public function generateHashName()
+    {
         return $this->laraFile->hash_name = md5(microtime());
     }
-    
 }

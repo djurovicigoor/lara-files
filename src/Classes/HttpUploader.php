@@ -8,15 +8,15 @@
 
 namespace DjurovicIgoor\LaraFiles\Classes;
 
-use DjurovicIgoor\LaraFiles\Contracts\UploaderInterfaces;
-use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
+use DjurovicIgoor\LaraFiles\Contracts\UploaderInterfaces;
 
-class HttpUploader extends Uploader implements UploaderInterfaces {
-    
+class HttpUploader extends Uploader implements UploaderInterfaces
+{
     use HashNameTrait;
-    
+
     /**
      * HttpFile constructor.
      *
@@ -25,39 +25,40 @@ class HttpUploader extends Uploader implements UploaderInterfaces {
      * @param $type
      * @param $additionalParameters
      */
-    public function __construct($disk, $path, $type, $additionalParameters) {
-        
+    public function __construct($disk, $path, $type, $additionalParameters)
+    {
         parent::__construct($disk, $path, $type, $additionalParameters);
     }
-    
+
     /**
      * @param $file
      *
      * @return mixed|void
      */
-    public function putFile($file) {
-        
+    public function putFile($file)
+    {
         $this->getFileOriginalName($file);
         Storage::disk($this->laraFile->disk)->put("{$this->laraFile->path}/{$this->generateHashName()}.{$this->getFileExtension($file)}", File::get($file));
         Storage::disk($this->laraFile->disk)->setVisibility("{$this->laraFile->path}/{$this->laraFile->hash_name}.{$this->laraFile->extension}", $this->laraFile->visibility);
     }
-    
+
     /**
      * @param $file
      *
      * @return string
      */
-    public function getFileExtension($file) {
-        
+    public function getFileExtension($file)
+    {
         return $this->laraFile->extension = $file->getClientOriginalExtension();
     }
-    
+
     /**
      * @param $file
      *
      * @return string
      */
-    public function getFileOriginalName($file) {
-        return $this->laraFile->name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);;
+    public function getFileOriginalName($file)
+    {
+        return $this->laraFile->name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
     }
 }
