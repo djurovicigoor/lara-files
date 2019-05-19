@@ -8,25 +8,24 @@
 
 namespace DjurovicIgoor\LaraFiles\Contracts;
 
-interface UploaderInterfaces {
-    
+interface UploaderInterfaces
+{
     /**
      * @param $file
      */
     public function putFile($file);
-    
+
     /**
      * @param $file
      *
      * @return string
      */
-    function getFileExtension($file);
-    
+    public function getFileExtension($file);
+
     /**
      * @param $file
      *
      * @return string
      */
-    function getFileOriginalName($file);
-    
+    public function getFileOriginalName($file);
 }
