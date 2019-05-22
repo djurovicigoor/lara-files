@@ -108,6 +108,8 @@ class LaraFile extends Model
                     return config('filesystems.disks.public.url').$this->fullPath;
                 case 'DOSpaces':
                     return config('filesystems.disks.DOSpaces.url').$this->fullPath;
+                case 's3':
+                    return config('filesystems.disks.s3.url').$this->fullPath;
                 default:
                     return null;
             }

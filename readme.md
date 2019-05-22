@@ -6,7 +6,7 @@
 ![Scrutinizer code quality (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/quality/g/djurovicigoor/lara-files/master.svg?style=for-the-badge)
 ![Scrutinizer build (GitHub/Bitbucket)](https://img.shields.io/scrutinizer/build/g/djurovicigoor/lara-files/master.svg?style=for-the-badge)
 
-Lara-files is a package which will make it easier to work with files. Package has built-in support for DigitalOcean spaces.
+Lara-files is a package which will make it easier to work with files. Package has built-in support for DigitalOcean spaces and Amazon S3.
 This package can be used in Laravel 5.5 or higher.   
  
 <p align="center">
@@ -94,7 +94,7 @@ Database schema:
 
 ## Usage
 Before you start using the package, you have to check your `config/filesystems.php` file and set correct disk drivers.
-Package support next drivers: 'local' , 'public' , 'DOSpaces'. Below is an example of correct disk drivers.
+Package support next drivers: 'local' , 'public' , 'DOSpaces' , 'Amazon S3'. Below is an example of correct disk drivers.
 ```php
 'disks' => [
      'local' => [
@@ -116,6 +116,14 @@ Package support next drivers: 'local' , 'public' , 'DOSpaces'. Below is an examp
         'bucket'   => env('DO_SPACES_BUCKET' , 'Your spaces bucket goes here'),
         'url'      => env('AWS_URL' , 'https://{BUCKET}.{REGION}.digitaloceanspaces.com/'),
     ],
+    's3' => [
+        'driver' => 's3',
+        'key'       => env('AWS_ACCESS_KEY_ID' , 'Your aws acces key goes here'),
+        'secret'    => env('AWS_SECRET_ACCESS_KEY' , 'Your aws secret key goes here'),
+        'region'    => env('AWS_DEFAULT_REGION' , 'Your aws default region goes here'),
+        'bucket'    => env('AWS_BUCKET' , 'Your aws bucket name goes here'),
+        'url'       => env('AWS_URL' , 'https://s3.{REGION}.amazonaws.com/{BUCKET}/'),
+    ]
 ],
 ```
 When you setup disk drivers, add the `DjurovicIgoor\LaraFiles\Traits\LaraFileTrait` trait to your model(s):
