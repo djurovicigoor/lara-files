@@ -1,6 +1,6 @@
 {
   "name": "djurovicigoor/lara-files",
-  "description": "Lara-files is a package which will make it easier to work with files. Package has built-in support for DigitalOcean spaces.",
+  "description": "Lara-files is a package which will make it easier to work with files. Package has built-in support for DigitalOcean spaces and Amazon S3.",
   "keywords": [
     "files",
     "lara-files",
