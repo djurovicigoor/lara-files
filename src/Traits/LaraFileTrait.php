@@ -183,6 +183,6 @@ trait LaraFileTrait
      */
     private function diskIsValid($disk)
     {
-        throw_unless(array_key_exists($disk, config('filesystems.disks')), new UnsupportedDiskAdapterException("Disk \"{$disk}\" is not supported! Please check your \"config/filesistems.php\" for disk drivers."), null);
+        throw_unless(array_key_exists($disk, config('filesystems.disks')), new UnsupportedDiskAdapterException("Disk \"{$disk}\" is not supported! Please check your \"config/filesystems.php\" for disk drivers."), null);
     }
 }
