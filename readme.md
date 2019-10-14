@@ -208,6 +208,7 @@ If you found this project helpful or you learned something from the source code 
 | Name                                               | Changes                                                                                                                       | Date       |
 | -------------------------------------------------- |:-----------------------------------------------------------------------------------------------------------------------------:|:----------:|
 | [@niladam](https://github.com/niladam) | Refactor to PSR2 and simplify accessor [pull request #2](https://github.com/djurovicigoor/lara-files/pull/2) | 2019-05-18 |
+| [@chefe](https://github.com/chefe) | Fix typo in exception message [pull request #5](https://github.com/djurovicigoor/lara-files/pull/5) | 2019-05-23 |
 
 ## License
 
