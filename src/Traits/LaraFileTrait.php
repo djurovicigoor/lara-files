@@ -73,7 +73,7 @@ trait LaraFileTrait
         // If the "attribute" exists as a method on the model, we will just assume
         // it is a relationship and will load and return results from the query
         // and hydrate the relationship's value on the "relationships" array. || in_array($key, $this->morphs)
-        if (in_array($key, config('lara-files.types')) || in_array(str_singular($key), config('lara-files.types'))) {
+        if (in_array($key, config('lara-files.types')) || in_array(Str::singular($key), config('lara-files.types'))) {
             return $this->getRelationshipFromMethod($key);
         } else {
             if (method_exists($this, $key)) {
