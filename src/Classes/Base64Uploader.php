@@ -861,6 +861,7 @@ class Base64Uploader extends Uploader implements UploaderInterfaces
      */
     public function explodeBase64String($base64String)
     {
+        dd($base64String);
         return explode(':', substr($base64String, 0, strpos($base64String, ';')))[1];
     }
 
