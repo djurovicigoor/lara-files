@@ -4,6 +4,7 @@ namespace DjurovicIgoor\LaraFiles;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use function config;
 
 /**
  * @property string  $disk
@@ -22,24 +23,28 @@ class LaraFile extends Model
 {
     /**
      * The table associated with the model.
+     *
      * @var string
      */
     protected $table = 'lara_files';
 
     /**
      * The attributes that aren't mass assignable.
+     *
      * @var array
      */
     protected $guarded = ['id'];
 
     /**
      * The accessors to append to the model's array form.
+     *
      * @var array
      */
-    protected $appends = ['url', 'fullPath'];
+    protected $appends = ['url', 'fullPath', 'dataPath'];
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
@@ -58,6 +63,7 @@ class LaraFile extends Model
 
     /**
      * The attributes that should be hidden for arrays.
+     *
      * @var array
      */
     protected $hidden = [
@@ -77,6 +83,7 @@ class LaraFile extends Model
 
     /**
      * Delete the model from the database.
+     *
      * @return bool|null
      * @throws \Exception
      */
@@ -88,7 +95,8 @@ class LaraFile extends Model
     }
 
     /**
-     * Return full url to the file
+     * Return relative path to the file
+     *
      * @return string
      */
     public function getFullPathAttribute()
@@ -96,8 +104,27 @@ class LaraFile extends Model
         return "{$this->attributes['path']}/{$this->attributes['hash_name']}.{$this->attributes['extension']}";
     }
 
+
+    /**
+     * Return absolute path to the file
+     *
+     * @return string
+     */
+    public function getDataPathAttribute()
+    {
+        switch ($this->attributes['disk']) {
+            case 'public':
+                return config('filesystems.disks.public.root').$this->fullPath;
+            case 'local':
+                return config('filesystems.disks.local.root').$this->fullPath;
+            default:
+                return null;
+        }
+    }
+
     /**
      * Return full url to the file
+     *
      * @return string
      */
     public function getUrlAttribute()
