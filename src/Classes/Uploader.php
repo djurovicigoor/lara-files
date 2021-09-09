@@ -28,6 +28,7 @@ abstract class Uploader
             'disk'        => $disk,
             'path'        => $path,
             'type'        => $type,
+            'name'        => array_key_exists('name', $additionalParameters) ? $additionalParameters['name'] : null,
             'visibility'  => array_key_exists('visibility', $additionalParameters) ? $additionalParameters['visibility'] : config('lara-files.public'),
             'description' => array_key_exists('description', $additionalParameters) ? $additionalParameters['description'] : null,
             'author_id'   => array_key_exists('user', $additionalParameters) ? $additionalParameters['user']->id : null,
