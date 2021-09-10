@@ -836,7 +836,7 @@ class Base64Uploader extends Uploader implements UploaderInterfaces
      */
     public function getFileOriginalName($file)
     {
-        return $this->laraFile->name = null;
+        return $this->laraFile->name;
     }
 
     /**
