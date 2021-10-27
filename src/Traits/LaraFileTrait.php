@@ -185,4 +185,29 @@ trait LaraFileTrait
     {
         throw_unless(array_key_exists($disk, config('filesystems.disks')), new UnsupportedDiskAdapterException("Disk \"{$disk}\" is not supported! Please check your \"config/filesystems.php\" for disk drivers."), null);
     }
+    
+    /**
+     * Copy file from another model
+     * 
+     * @param  LaraFile  $laraFile
+     */
+    public function copyFromAnotherLaraFile(LaraFile $laraFile)
+    {
+        $hashName = md5(microtime());
+        $copedFile = Storage::disk($laraFile->disk)->copy("{$laraFile->path}/{$laraFile->hash_name}.{$laraFile->extension}", $this->getModelPath()."/$hashName.{$laraFile->extension}");
+        if ($copedFile) {
+            $newLaraFile = new LaraFile([
+                'disk'        => $laraFile->disk,
+                'path'        => $this->getModelPath(),
+                'type'        => $laraFile->type,
+                'hash_name'   => $hashName,
+                'name'        => $laraFile->name,
+                'extension'   => $laraFile->extension,
+                'visibility'  => $laraFile->visibility,
+                'description' => self::class.' attachment',
+                'author_id'   => IqAuth()->id(),
+            ]);
+            $this->laraFiles()->save($newLaraFile);
+        }
+    }
 }
