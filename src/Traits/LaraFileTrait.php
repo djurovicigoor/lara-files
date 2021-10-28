@@ -9,6 +9,7 @@
 namespace DjurovicIgoor\LaraFiles\Traits;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use DjurovicIgoor\LaraFiles\LaraFile;
 use DjurovicIgoor\LaraFiles\Classes\HttpUploader;
 use DjurovicIgoor\LaraFiles\Classes\Base64Uploader;
