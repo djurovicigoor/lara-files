@@ -208,6 +208,8 @@ If you found this project helpful or you learned something from the source code 
 | Name                                               | Changes                                                                                                                       | Date       |
 | -------------------------------------------------- |:-----------------------------------------------------------------------------------------------------------------------------:|:----------:|
 | [@niladam](https://github.com/niladam) | Refactor to PSR2 and simplify accessor [pull request #2](https://github.com/djurovicigoor/lara-files/pull/2) | 2019-05-18 |
+| [@chefe](https://github.com/chefe) | Fix typo in exception message  [pull request #5](https://github.com/djurovicigoor/lara-files/pull/5) | 2019-05-23 |
+| [@omly97](https://github.com/omly97) | Laravel 10 - Fix - Error Call to undefined function str_plural [pull request #6](https://github.com/djurovicigoor/lara-files/pull/6) | 2023-08-17 |
 
 ## License
 
