@@ -10,6 +10,7 @@ namespace DjurovicIgoor\LaraFiles\Traits;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use DjurovicIgoor\LaraFiles\LaraFile;
 use DjurovicIgoor\LaraFiles\Classes\HttpUploader;
 use DjurovicIgoor\LaraFiles\Classes\Base64Uploader;
@@ -35,7 +36,7 @@ trait LaraFileTrait
                 }
             }
             foreach (config('lara-files.types') as $value) {
-                if (in_array($method, [str_plural($value)])) {
+                if (in_array($method, [Str::plural($value)])) {
                     return $this->morphMany(LaraFile::class, 'larafilesable')->where('type', $value);
                 }
             }
@@ -45,7 +46,7 @@ trait LaraFileTrait
                 }
             }
             foreach (config('lara-files.types') as $value) {
-                if (in_array($method, ['get'.str_plural(ucwords($value))])) {
+                if (in_array($method, ['get'.Str::plural(ucwords($value))])) {
                     return $this->morphMany(LaraFile::class, 'larafilesable')->where('type', $value)->get();
                 }
             }
