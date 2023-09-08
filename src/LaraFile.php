@@ -146,7 +146,6 @@ class LaraFile extends Model
                 case 'DOSpaces':
                     return $this->createPath([config('filesystems.disks.DOSpaces.url'), $this->fullPath]);
                 case 's3':
-                    return config('filesystems.disks.s3.url').$this->fullPath;
                     return $this->createPath([config('filesystems.disks.s3.url'), $this->fullPath]);
                 default:
                     return null;
