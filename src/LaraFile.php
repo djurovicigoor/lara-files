@@ -74,6 +74,16 @@ class LaraFile extends Model
     ];
 
     /**
+     * Create path to filesystem.
+     *
+     * @return string
+     */
+    private function createPath(array $pathComponents): string
+    {
+        return implode(DIRECTORY_SEPARATOR, $pathComponents);
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function larafilesable()
@@ -114,9 +124,9 @@ class LaraFile extends Model
     {
         switch ($this->attributes['disk']) {
             case 'public':
-                return config('filesystems.disks.public.root').$this->fullPath;
+                return $this->createPath([config('filesystems.disks.public.root'), $this->fullPath]);
             case 'local':
-                return config('filesystems.disks.local.root').$this->fullPath;
+                return $this->createPath([config('filesystems.disks.local.root'), $this->fullPath]);
             default:
                 return null;
         }
@@ -132,11 +142,11 @@ class LaraFile extends Model
         if ($this->attributes['visibility'] === 'public') {
             switch ($this->attributes['disk']) {
                 case 'public':
-                    return config('filesystems.disks.public.url').$this->fullPath;
+                    return $this->createPath([config('filesystems.disks.public.url'), $this->fullPath]);
                 case 'DOSpaces':
-                    return config('filesystems.disks.DOSpaces.url').$this->fullPath;
+                    return $this->createPath([config('filesystems.disks.DOSpaces.url'), $this->fullPath]);
                 case 's3':
-                    return config('filesystems.disks.s3.url').$this->fullPath;
+                    return $this->createPath([config('filesystems.disks.s3.url'), $this->fullPath]);
                 default:
                     return null;
             }
