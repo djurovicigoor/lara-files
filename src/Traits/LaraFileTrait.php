@@ -206,7 +206,7 @@ trait LaraFileTrait
                 'extension'   => $laraFile->extension,
                 'visibility'  => $laraFile->visibility,
                 'description' => self::class.' attachment',
-                'author_id'   => $laraFile->author_id,,
+                'author_id'   => $laraFile->author_id,
             ]);
             $this->laraFiles()->save($newLaraFile);
         }
