@@ -1,20 +1,24 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: djurovic
- * Date: 2019-04-18
- * Time: 10:28
- */
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
+use Illuminate\Support\Str;
+
 trait HashNameTrait
 {
-    /**
-     * @return string
-     */
-    public function generateHashName()
-    {
-        return $this->laraFile->hash_name = md5(microtime());
-    }
+	/**
+	 * @return string
+	 */
+	public function getHashName(): string
+	{
+		return $this->hashName;
+	}
+	
+	/**
+	 * @return void
+	 */
+	public function generateHashName(): void
+	{
+		$this->hashName = Str::uuid7()->toString();
+	}
 }
