@@ -1,14 +1,4 @@
 <?php
-/**
- * Classes/Base64Uploader.php
- * Class for upload base64 images.
- * Created by PhpStorm.
- * Date: 17.04.19.
- * Time: 19.45
- *
- * @package Lara-files
- * @author  Djurovic Igor djurovic.igoor@gmail.com
- */
 
 namespace DjurovicIgoor\LaraFiles\Classes;
 
@@ -794,7 +784,7 @@ class Base64File extends AbstractFile
 		'video/x-smv'                                                               => 'smv',
 		'x-conference/x-cooltalk'                                                   => 'ice',
 	];
-	private string $tempFileForDestruction;
+	private ?string $tempFileForDestruction = NULL;
 	
 	/**
 	 * @param $file
@@ -812,7 +802,7 @@ class Base64File extends AbstractFile
 	
 	public function __destruct()
 	{
-		if (Storage::disk('local')->exists($this->tempFileForDestruction)) {
+		if ($this->tempFileForDestruction && Storage::disk('local')->exists($this->tempFileForDestruction)) {
 			Storage::delete($this->tempFileForDestruction);
 		}
 	}
@@ -902,7 +892,7 @@ class Base64File extends AbstractFile
 	public function storeToTempFolder(): false|string
 	{
 		$tempFilePath = 'lara-files/tmp';
-		if (!Storage::disk('local')->exists($tempFilePath)) {
+		if (Storage::disk('local')->missing($tempFilePath)) {
 			Storage::disk('local')->makeDirectory($tempFilePath);
 		}
 		$tempFullPath = $tempFilePath . '/tmp-file-' . $this->getHashName() . '.' . $this->getFileExtension();
