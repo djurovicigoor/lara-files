@@ -32,7 +32,7 @@ class HttpFile extends AbstractFile
 	 */
 	public function getFileExtension(): string
 	{
-		return $this->file->getClientOriginalExtension();
+		return $this->file->extension();
 	}
 	
 	/**

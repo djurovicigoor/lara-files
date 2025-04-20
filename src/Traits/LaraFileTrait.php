@@ -37,32 +37,32 @@ trait LaraFileTrait
 		return parent::__call($method, $arguments);
 	}
 	
-	/**
-	 * @param       $method
-	 * @param       $arguments
-	 * @param mixed $key
-	 *
-	 * @return mixed
-	 */
-	public function getRelationValue($key)
-	{
-		if ($this->relationLoaded($key)) {
-			return $this->relations[$key];
-		}
-		
-		if (!$this->isRelation($key) && !(in_array($key, config('lara-files.types')) || in_array(str_singular($key), config('lara-files.types')))) {
-			return;
-		}
-		
-		if ($this->preventsLazyLoading) {
-			$this->handleLazyLoadingViolation($key);
-		}
-		
-		// If the "attribute" exists as a method on the model, we will just assume
-		// it is a relationship and will load and return results from the query
-		// and hydrate the relationship's value on the "relationships" array.
-		return $this->getRelationshipFromMethod($key);
-	}
+//	/**
+//	 * @param       $method
+//	 * @param       $arguments
+//	 * @param mixed $key
+//	 *
+//	 * @return mixed
+//	 */
+//	public function getRelationValue($key)
+//	{
+//		if ($this->relationLoaded($key)) {
+//			return $this->relations[$key];
+//		}
+//
+//		if (!$this->isRelation($key) && !(in_array($key, config('lara-files.types')) || in_array(str_singular($key), config('lara-files.types')))) {
+//			return;
+//		}
+//
+//		if ($this->preventsLazyLoading) {
+//			$this->handleLazyLoadingViolation($key);
+//		}
+//
+//		// If the "attribute" exists as a method on the model, we will just assume
+//		// it is a relationship and will load and return results from the query
+//		// and hydrate the relationship's value on the "relationships" array.
+//		return $this->getRelationshipFromMethod($key);
+//	}
 	
 	/**
 	 * @param      $uploadedFile

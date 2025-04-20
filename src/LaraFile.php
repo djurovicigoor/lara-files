@@ -239,4 +239,16 @@ class LaraFile extends Model
 		
 		return Storage::disk($this->attributes['disk'])->lastModified($this->fullPath);
 	}
+	
+	/**
+	 * @return string|null
+	 */
+	public function getDataPath(): ?string
+	{
+		if (!\in_array($this->attributes['disk'], ['local', 'public']) || Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
+			return NULL;
+		}
+		
+		return Storage::disk($this->attributes['disk'])->path($this->fullPath);
+	}
 }

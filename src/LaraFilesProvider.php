@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DjurovicIgoor\LaraFiles;
 
 use Illuminate\Support\ServiceProvider;
-use DjurovicIgoor\LaraFiles\Console\Commands\SetupLaraFiles;
 
 class LaraFilesProvider extends ServiceProvider
 {
@@ -32,10 +31,6 @@ class LaraFilesProvider extends ServiceProvider
 	 */
 	public function register(): void
 	{
-		$this->commands([
-			SetupLaraFiles::class,
-		]);
-		
 		$this->mergeConfigFrom(__DIR__ . '/../config/lara-files.php', 'lara-files');
 	}
 }
