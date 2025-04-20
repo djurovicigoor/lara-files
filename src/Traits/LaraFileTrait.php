@@ -6,8 +6,8 @@ use Throwable;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use DjurovicIgoor\LaraFiles\LaraFile;
-use Illuminate\Support\Facades\Storage;
 use DjurovicIgoor\LaraFiles\Classes\LaraFileUploader;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
@@ -180,46 +180,51 @@ trait LaraFileTrait
 	}
 	
 	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 * @return MorphMany
 	 */
-	public function laraFiles()
+	public function laraFiles(): MorphMany
 	{
 		return $this->morphMany(LaraFile::class, 'larafilesable');
-	}
-	
-	/**
-	 * @param $disk
-	 *
-	 * @throws \Throwable
-	 */
-	private function diskIsValid($disk)
-	{
-		throw_unless(array_key_exists($disk, config('filesystems.disks')), new UnsupportedDiskAdapterException("Disk \"{$disk}\" is not supported! Please check your \"config/filesystems.php\" for disk drivers."), NULL);
 	}
 	
 	/**
 	 * Copy file from another model
 	 *
 	 * @param LaraFile $laraFile
+	 * @param          $disk
+	 * @param          $type
+	 * @param null     $visibility
+	 * @param null     $description
+	 * @param null     $authorId
+	 * @param null     $name
+	 *
+	 * @return LaraFile
+	 * @throws FileNotFoundException
+	 * @throws Throwable
 	 */
-	public function copyFromAnotherLaraFile(LaraFile $laraFile)
+	public function copyFromAnotherLaraFile(LaraFile $laraFile, $disk = NULL, $type = NULL, $visibility = NULL, $description = NULL, $authorId = NULL, $name = NULL): LaraFile
 	{
-		$hashName  = md5(microtime());
-		$copedFile = Storage::disk($laraFile->disk)
-			->copy("{$laraFile->path}/{$laraFile->hash_name}.{$laraFile->extension}", $this->getModelPath() . "/$hashName.{$laraFile->extension}");
-		if ($copedFile) {
-			$newLaraFile = new LaraFile([
-				'disk'        => $laraFile->disk,
-				'path'        => $this->getModelPath(),
-				'type'        => $laraFile->type,
-				'hash_name'   => $hashName,
-				'name'        => $laraFile->name,
-				'extension'   => $laraFile->extension,
-				'visibility'  => $laraFile->visibility,
-				'description' => self::class . ' attachment',
-				'author_id'   => $laraFile->author_id,
-			]);
-			$this->laraFiles()->save($newLaraFile);
+		$laraFileUploader = (new LaraFileUploader(uploadedFile: $laraFile, fileUploaderType: 'lara_file'))->setDisk(disk: $disk ?? $laraFile->disk)
+			->setType(type: $type ?? $laraFile->type)
+			->setModel(model: $this);
+		
+		$laraFileUploader->setVisibility(visibility: $visibility ?? $laraFile->visibility);
+		
+		$description = $description ?? $laraFile->description;
+		if ($description !== NULL) {
+			$laraFileUploader->setDescription(description: $description);
 		}
+		
+		$authorId = $authorId ?? $laraFile->author_id;
+		if ($authorId !== NULL) {
+			$laraFileUploader->setAuthorId(authorId: $authorId);
+		}
+		
+		$name = $name ?? $laraFile->name;
+		if ($name !== NULL) {
+			$laraFileUploader->setName(name: $name);
+		}
+		
+		return $laraFileUploader->upload();
 	}
 }

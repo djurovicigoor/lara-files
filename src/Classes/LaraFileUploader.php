@@ -67,6 +67,9 @@ class LaraFileUploader
 		if ($fileUploaderType === 'base64_file') {
 			$this->uploadedFile = new Base64File($uploadedFile);
 		}
+		if ($fileUploaderType === 'lara_file') {
+			$this->uploadedFile = new AnotherLaraFile($uploadedFile);
+		}
 	}
 	
 	/**
