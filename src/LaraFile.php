@@ -3,12 +3,14 @@
 namespace DjurovicIgoor\LaraFiles;
 
 use Throwable;
+use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
+use DjurovicIgoor\LaraFiles\Exceptions\VisibilityIsNotValidException;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 
 /**
@@ -273,6 +275,22 @@ class LaraFile extends Model
 		$this->update(['disk' => $disk]);
 		
 		Storage::disk($oldDisk)->delete($this->full_path);
+		
+		return $this->fresh();
+	}
+	
+	/**
+	 * @throws VisibilityIsNotValidException|Throwable
+	 */
+	public function changeVisibility($visibility): ?LaraFile
+	{
+		\throw_if(!in_array($visibility, ['public', 'private']), new VisibilityIsNotValidException($visibility));
+		
+		$successfullyUpdated = Storage::disk($this->attributes['disk'])->setVisibility($this->full_path, $visibility);
+		
+		throw_if(!$successfullyUpdated, new Exception('Unable to change visibility.', 500));
+		
+		$this->update(['visibility' => $visibility]);
 		
 		return $this->fresh();
 	}
