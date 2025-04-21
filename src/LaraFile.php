@@ -294,4 +294,18 @@ class LaraFile extends Model
 		
 		return $this->fresh();
 	}
+	
+	/**
+	 * @param null  $expirationTime
+	 * @param array $S3RequestParameters
+	 *
+	 * @return string|null
+	 */
+	public function getTemporaryUrl($expirationTime = NULL, array $S3RequestParameters = []): ?string
+	{
+		if (!$expirationTime) {
+			$expirationTime = now()->addMinutes(5);
+		}
+		return Storage::disk($this->attributes['disk'])->temporaryUrl($this->full_path, $expirationTime, $S3RequestParameters);
+	}
 }
