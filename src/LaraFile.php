@@ -2,11 +2,14 @@
 
 namespace DjurovicIgoor\LaraFiles;
 
+use Throwable;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
+use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 
 /**
  * @property string  $id
@@ -250,5 +253,27 @@ class LaraFile extends Model
 		}
 		
 		return Storage::disk($this->attributes['disk'])->path($this->fullPath);
+	}
+	
+	/**
+	 * @throws UnsupportedDiskAdapterException|UnableToUploadFileException|Throwable
+	 */
+	public function changeDisk(string $disk): ?LaraFile
+	{
+		$oldDisk = $this->attributes['disk'];
+		
+		throw_if(!array_key_exists($disk, config('filesystems.disks')), new UnsupportedDiskAdapterException($disk));
+		
+		$successfullyMoved = Storage::disk($disk)->put($this->full_path, Storage::disk($this->attributes['disk'])->get($this->full_path), [
+			'visibility' => $this->visibility,
+		]);
+		
+		throw_if(!$successfullyMoved, new UnableToUploadFileException());
+		
+		$this->update(['disk' => $disk]);
+		
+		Storage::disk($oldDisk)->delete($this->full_path);
+		
+		return $this->fresh();
 	}
 }
