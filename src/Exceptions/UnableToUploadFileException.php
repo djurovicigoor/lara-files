@@ -6,8 +6,8 @@ use RuntimeException;
 
 final class UnableToUploadFileException extends RuntimeException
 {
-	public function __construct()
-	{
-		parent::__construct('Unable to upload file.', 500);
-	}
+    public function __construct()
+    {
+        parent::__construct('Unable to upload file.', 500);
+    }
 }

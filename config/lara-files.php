@@ -1,11 +1,12 @@
 <?php
+
 /**
  * config/lara-files.php
  * Lara-files configuration file.
  * Created by PhpStorm.
  * Date: 20.11.17.
  * Time: 19.45
- * @package Lara-files
+ *
  * @author  Djurovic Igor djurovic.igoor@gmail.com
  */
 return [
@@ -17,14 +18,14 @@ return [
     | public  => Files are accessible through browser
     | private => Files are not accessible through browser
     */
-    'visibility'   => 'public',
+    'visibility' => 'public',
     /*
     |--------------------------------------------------------------------------
     | Type of files - relations
     |--------------------------------------------------------------------------
     |
     */
-    'types'        => [
+    'types' => [
         'file',
         'avatar',
         'thumbnail',
@@ -35,7 +36,7 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'author'       => TRUE,
+    'author' => true,
     /*
     |--------------------------------------------------------------------------
     | Author model

@@ -6,24 +6,14 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 interface UploadFileInterface
 {
-	/**
-	 * @return string
-	 */
-	public function getFileExtension(): string;
-	
-	/**
-	 * @return string|null
-	 */
-	public function getFileOriginalName(): ?string;
-	
-	/**
-	 * @return string
-	 */
-	public function getHashName(): string;
-	
-	/**
-	 * @return string
-	 * @throws FileNotFoundException
-	 */
-	public function getFileForUpload(): string;
+    public function getFileExtension(): string;
+
+    public function getFileOriginalName(): ?string;
+
+    public function getHashName(): string;
+
+    /**
+     * @throws FileNotFoundException
+     */
+    public function getFileForUpload(): string;
 }

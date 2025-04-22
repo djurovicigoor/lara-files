@@ -4,14 +4,7 @@ namespace DjurovicIgoor\LaraFiles\Contracts;
 
 interface FileHashNameInterface
 {
-	/**
-	 * @return void
-	 */
-	public function generateHashName(): void;
-	
-	/**
-	 * @return string
-	 */
-	public function getHashName(): string;
-	
+    public function generateHashName(): void;
+
+    public function getHashName(): string;
 }
