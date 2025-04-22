@@ -15,6 +15,8 @@ return new class extends Migration
 	{
 		Schema::table('lara_files', function (Blueprint $table) {
 			$table->uuid()->nullable()->after('id');
+			$table->string('larafilesable_type')->nullable()->change();
+			$table->string('larafilesable_id')->nullable()->change();
 		});
 		
 		DB::table('lara_files')->orderBy('id')->chunk(50, function ($items) {

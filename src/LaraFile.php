@@ -110,7 +110,7 @@ class LaraFile extends Model
 		parent::boot();
 		
 		static::creating(function ($model) {
-			$model->id = Str::uuid()->toString();
+			$model->id = Str::uuid7()->toString();
 		});
 	}
 	

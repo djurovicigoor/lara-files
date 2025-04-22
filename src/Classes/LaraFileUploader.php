@@ -227,4 +227,38 @@ class LaraFileUploader
 		
 		return $laraFile;
 	}
+	
+	/**
+	 * @param $uploadedFile
+	 * @param $fileUploaderType
+	 * @param $disk
+	 * @param $type
+	 * @param $visibility
+	 * @param $description
+	 * @param $authorId
+	 * @param $name
+	 *
+	 * @return LaraFile
+	 * @throws FileNotFoundException
+	 * @throws Throwable
+	 */
+	public static function uploadForOptimizationAndManipulation($uploadedFile, $fileUploaderType, $disk, $type, $visibility = NULL, $description = NULL, $authorId = NULL, $name = NULL): LaraFile
+	{
+		$laraFileUploader = (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: $fileUploaderType))->setDisk(disk: $disk)->setType(type: $type);
+		
+		if ($visibility) {
+			$laraFileUploader->setVisibility(visibility: $visibility);
+		}
+		if ($description) {
+			$laraFileUploader->setDescription(description: $description);
+		}
+		if ($authorId) {
+			$laraFileUploader->setAuthorId(authorId: $authorId);
+		}
+		if ($name) {
+			$laraFileUploader->setName(name: $name);
+		}
+		
+		return $laraFileUploader->upload();
+	}
 }
