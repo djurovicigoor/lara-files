@@ -21,11 +21,25 @@
   ],
   "minimum-stability": "dev",
   "require": {
-      "league/flysystem-aws-s3-v3": "^1.0|^2.0|^3.0"
+    "doctrine/dbal": "3.10.x-dev"
+  },
+  "require-dev": {
+    "league/flysystem-aws-s3-v3": "^1.0|^2.0|^3.0",
+    "pestphp/pest": "2.x-dev",
+    "pestphp/pest-plugin-laravel": "2.x-dev",
+    "orchestra/testbench": "8.x-dev"
+  },
+  "suggest": {
+    "league/flysystem-aws-s3-v3": "Required to use AWS S3 file storage"
   },
   "autoload": {
     "psr-4": {
       "DjurovicIgoor\\LaraFiles\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Djurovicigoor\\LaraFiles\\Tests\\": "tests/"
     }
   },
   "extra": {
@@ -33,6 +47,11 @@
       "providers": [
         "DjurovicIgoor\\LaraFiles\\LaraFilesProvider"
       ]
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
     }
   }
 }

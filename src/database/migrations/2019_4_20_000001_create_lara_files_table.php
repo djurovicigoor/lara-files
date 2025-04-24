@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('lara_files', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('disk')->default('public')->comment('Disk Adapter must be defined in your config/filesustems.ph p ');
+            $table->string('disk')->default('public')->comment('Disk Adapter must be defined in your config/filesystems.php');
             $table->string('path')->nullable()->comment('Relative file path.');
             $table->string('hash_name')->nullable()->comment('Hashed name of the file.');
             $table->string('extension')->nullable()->comment('Extension of the file.');

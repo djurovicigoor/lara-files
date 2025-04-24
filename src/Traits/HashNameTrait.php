@@ -13,6 +13,6 @@ trait HashNameTrait
 
     public function generateHashName(): void
     {
-        $this->hashName = Str::uuid7()->toString();
+        $this->hashName = Str::uuid()->toString();
     }
 }

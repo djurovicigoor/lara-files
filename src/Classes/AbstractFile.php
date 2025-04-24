@@ -7,6 +7,10 @@ use DjurovicIgoor\LaraFiles\Contracts\UploadFileInterface;
 use DjurovicIgoor\LaraFiles\LaraFile;
 use Illuminate\Http\UploadedFile;
 
+/**
+ * Abstract class representing a file and its related functionality.
+ * Implements interfaces for hashing file names and file upload management.
+ */
 abstract class AbstractFile implements FileHashNameInterface, UploadFileInterface
 {
     protected ?string $hashName = null;
