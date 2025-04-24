@@ -6,7 +6,7 @@ use DjurovicIgoor\LaraFiles\Classes\LaraFileUploader;
 use DjurovicIgoor\LaraFiles\Exceptions\FileTypeIsNotPresentedException;
 use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
-use DjurovicIgoor\LaraFiles\LaraFile;
+use DjurovicIgoor\LaraFiles\Models\LaraFile;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;

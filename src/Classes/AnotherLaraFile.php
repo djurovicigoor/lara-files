@@ -3,7 +3,7 @@
 namespace DjurovicIgoor\LaraFiles\Classes;
 
 use DjurovicIgoor\LaraFiles\Exceptions\FileIsNotInstanceOfLaraFileModelException;
-use DjurovicIgoor\LaraFiles\LaraFile;
+use DjurovicIgoor\LaraFiles\Models\LaraFile;
 use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
 use Throwable;
 

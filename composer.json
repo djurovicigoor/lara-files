@@ -45,7 +45,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "DjurovicIgoor\\LaraFiles\\LaraFilesProvider"
+        "DjurovicIgoor\\LaraFiles\\LaraFileServiceProvider"
       ]
     }
   },

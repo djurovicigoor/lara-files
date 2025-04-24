@@ -4,7 +4,7 @@ namespace Tests;
 
 namespace Djurovicigoor\LaraFiles\Tests;
 
-use DjurovicIgoor\LaraFiles\LaraFilesProvider;
+use DjurovicIgoor\LaraFiles\LaraFileServiceProvider;
 use Djurovicigoor\LaraFiles\Tests\TestSupport\TestModels\TestModel;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Application;
@@ -29,7 +29,7 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
-            LaraFilesProvider::class,
+            LaraFileServiceProvider::class,
         ];
     }
 

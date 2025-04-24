@@ -1,6 +1,6 @@
 <?php
 
-namespace DjurovicIgoor\LaraFiles;
+namespace DjurovicIgoor\LaraFiles\Models;
 
 use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
@@ -9,7 +9,6 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -97,22 +96,6 @@ class LaraFile extends Model
         'larafilesable_type',
         'larafilesable_id',
     ];
-
-    /**
-     * The "booting" method of the model.
-     *
-     * This method is called when the model is booting.
-     * It adds two global scopes to the model: UserScope and NewestScope.
-     */
-    protected static function boot(): void
-    {
-        // Call the parent's boot method
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->id = Str::uuid()->toString();
-        });
-    }
 
     public function larafilesable(): MorphTo
     {

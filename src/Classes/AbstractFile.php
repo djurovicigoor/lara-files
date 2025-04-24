@@ -4,7 +4,7 @@ namespace DjurovicIgoor\LaraFiles\Classes;
 
 use DjurovicIgoor\LaraFiles\Contracts\FileHashNameInterface;
 use DjurovicIgoor\LaraFiles\Contracts\UploadFileInterface;
-use DjurovicIgoor\LaraFiles\LaraFile;
+use DjurovicIgoor\LaraFiles\Models\LaraFile;
 use Illuminate\Http\UploadedFile;
 
 /**
