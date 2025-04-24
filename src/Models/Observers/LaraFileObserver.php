@@ -2,8 +2,8 @@
 
 namespace DjurovicIgoor\LaraFiles\Models\Observers;
 
-use Illuminate\Support\Str;
 use DjurovicIgoor\LaraFiles\Models\LaraFile;
+use Illuminate\Support\Str;
 
 class LaraFileObserver
 {
@@ -12,7 +12,7 @@ class LaraFileObserver
         if (empty($laraFile->id)) {
             $laraFile->id = Str::uuid()->toString();
         }
-        
+
         if (is_null($laraFile->order)) {
             $laraFile->setHighestOrderNumber();
         }

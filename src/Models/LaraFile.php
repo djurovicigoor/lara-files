@@ -5,9 +5,9 @@ namespace DjurovicIgoor\LaraFiles\Models;
 use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Exceptions\VisibilityIsNotValidException;
+use DjurovicIgoor\LaraFiles\Traits\Sortable;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use DjurovicIgoor\LaraFiles\Traits\Sortable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -34,7 +34,7 @@ use Throwable;
 class LaraFile extends Model
 {
     use Sortable;
-    
+
     /**
      * Indicates if the IDs are auto-incrementing.
      *

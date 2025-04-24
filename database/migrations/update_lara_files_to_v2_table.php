@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -18,20 +18,20 @@ return new class extends Migration
             $table->string('larafilesable_id')->nullable()->index()->change();
             $table->string('type')->index()->change();
         });
-        
+
         DB::table('lara_files')->orderBy('id')->chunk(50, function ($items) {
             $items->each(function ($item) {
-                if ( ! empty($item->id)) {
+                if (! empty($item->id)) {
                     DB::table('lara_files')->where('id', $item->id)->update([
-                            'uuid' => (string) Str::uuid(),
+                        'uuid' => (string) Str::uuid(),
                     ]);
                 }
             });
         });
-        
+
         if (DB::getDriverName() === 'sqlite') {
             Schema::rename('lara_files', 'lara_files_old');
-            
+
             Schema::create('lara_files', function (Blueprint $table) {
                 $table->increments('id'); // or uuid or whatever new type
                 $table->uuid()->nullable();
@@ -48,28 +48,28 @@ return new class extends Migration
                 $table->integer('larafilesable_id')->nullable()->comment('Id of the belonging model.');
                 $table->timestamps();
             });
-            
+
             DB::statement('INSERT INTO lara_files SELECT * FROM lara_files_old');
             Schema::drop('lara_files_old');
         } else {
             DB::statement('ALTER TABLE lara_files MODIFY id BIGINT UNSIGNED NOT NULL;');
             DB::statement('ALTER TABLE lara_files DROP PRIMARY KEY;');
         }
-        
+
         // If you have any reference to lara_files_table . id in other tables , update here any FK columns and copy matching UUIDs .
-        
+
         if (DB::getDriverName() !== 'sqlite') {
             Schema::table('lara_files', function (Blueprint $table) {
                 $table->dropColumn('id');
             });
         }
-        
+
         Schema::table('lara_files', function (Blueprint $table) {
             $table->renameColumn('uuid', 'id');
             $table->uuid('id')->primary()->change();
         });
     }
-    
+
     /**
      * Reverse the migrations.
      */
