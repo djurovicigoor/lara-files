@@ -13,7 +13,7 @@ class LaraFileServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        $package->name('lara-files')->hasConfigFile('lara-files')->hasMigration('create_lara_files_table');
+        $package->name('lara-files')->hasConfigFile('lara-files')->hasMigration('create_lara_files_table')->hasMigration('update_lara_files_to_v2_table');
     }
 
     public function packageBooted(): void
