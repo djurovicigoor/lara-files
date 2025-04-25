@@ -9,6 +9,7 @@ use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Models\LaraFile;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -16,6 +17,18 @@ use Throwable;
 
 trait LaraFileTrait
 {
+    public static function bootLaraFileTrait(): void
+    {
+        static::deleting(function ($model) {
+            if (in_array(SoftDeletes::class, class_uses_recursive($model))) {
+                if (! $model->forceDeleting) {
+                    return;
+                }
+            }
+            $model->laraFiles()->cursor()->each(fn (LaraFile $laraFile) => $laraFile->delete());
+        });
+    }
+
     public function __call($method, $arguments)
     {
         if (! empty(config('lara-files.types'))) {

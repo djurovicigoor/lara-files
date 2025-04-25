@@ -19,7 +19,7 @@ class LaraFileObserver
         }
     }
 
-    public function deleteing(LaraFile $laraFile)
+    public function deleting(LaraFile $laraFile): void
     {
         if (Storage::disk($laraFile->disk)->exists($laraFile->fullPath)) {
             Storage::disk($laraFile->disk)->delete($laraFile->fullPath);
