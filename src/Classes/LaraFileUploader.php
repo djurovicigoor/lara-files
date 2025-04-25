@@ -39,6 +39,8 @@ class LaraFileUploader
 
     private ?string $name = null;
 
+    private array $customProperties = [];
+
     private ?Model $model = null;
 
     /**
@@ -153,6 +155,13 @@ class LaraFileUploader
         return $this;
     }
 
+    public function setCustomProperties(array $customProperties): self
+    {
+        $this->customProperties = $customProperties;
+
+        return $this;
+    }
+
     /**
      * @throws UnsupportedDiskAdapterException|FileTypeIsNotPresentedException|FileNotFoundException|UnableToUploadFileException|Throwable
      */
@@ -181,15 +190,8 @@ class LaraFileUploader
         \throw_if(! $isSuccessfullyUploaded, new UnableToUploadFileException);
 
         $laraFile = new LaraFile([
-            'disk' => $this->disk,
-            'path' => $path,
-            'hash_name' => $fileHashName,
-            'extension' => $fileExtension,
-            'name' => $fileOriginalName,
-            'type' => $this->type,
-            'visibility' => $this->getVisibility(),
-            'description' => $this->description,
-            'author_id' => $this->authorId,
+            'disk' => $this->disk, 'path' => $path, 'hash_name' => $fileHashName, 'extension' => $fileExtension, 'name' => $fileOriginalName, 'type' => $this->type,
+            'visibility' => $this->getVisibility(), 'custom_properties' => $this->customProperties, 'description' => $this->description, 'author_id' => $this->authorId,
         ]);
 
         if ($this->model instanceof Model) {
@@ -210,8 +212,16 @@ class LaraFileUploader
      * @throws FileNotFoundException
      * @throws Throwable
      */
-    public static function uploadForOptimizationAndManipulation($uploadedFile, $fileUploaderType, $disk, $type, $visibility = null, $description = null, $authorId = null, $name = null): LaraFile
-    {
+    public static function uploadForOptimizationAndManipulation(
+        $uploadedFile,
+        $fileUploaderType,
+        $disk,
+        $type,
+        $visibility = null,
+        $description = null,
+        $authorId = null,
+        $name = null
+    ): LaraFile {
         $laraFileUploader = (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: $fileUploaderType))->setDisk(disk: $disk)->setType(type: $type);
 
         if ($visibility) {

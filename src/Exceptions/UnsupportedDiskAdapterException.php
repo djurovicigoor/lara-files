@@ -14,7 +14,7 @@ final class UnsupportedDiskAdapterException extends RuntimeException
     /**
      * Creates a new Exception instance.
      */
-    public function __construct(string $disk)
+    public function __construct(?string $disk)
     {
         parent::__construct(sprintf(self::MESSAGE, $disk));
     }

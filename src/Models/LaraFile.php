@@ -5,9 +5,10 @@ namespace DjurovicIgoor\LaraFiles\Models;
 use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Exceptions\VisibilityIsNotValidException;
+use DjurovicIgoor\LaraFiles\Traits\CustomProperties;
+use DjurovicIgoor\LaraFiles\Traits\Sortable;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use DjurovicIgoor\LaraFiles\Traits\Sortable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -27,14 +28,15 @@ use Throwable;
  * @property int $author_id
  * @property string $larafilesable_type
  * @property int $larafilesable_id
+ * @property array $custom_properties
  * @property-read  int $size
  * @property-read string $mime_type
  * @property-read int $last_modified
  */
 class LaraFile extends Model
 {
-    use Sortable;
-    
+    use CustomProperties, Sortable;
+
     /**
      * Indicates if the IDs are auto-incrementing.
      *
@@ -71,12 +73,21 @@ class LaraFile extends Model
     protected $appends = ['url', 'fullPath'];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'custom_properties' => 'array',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'disk', 'path', 'hash_name', 'extension', 'name', 'type', 'visibility', 'description', 'author_id', 'larafilesable_type', 'larafilesable_id',
+        'disk', 'path', 'hash_name', 'extension', 'name', 'type', 'visibility', 'description', 'author_id', 'larafilesable_type', 'larafilesable_id', 'custom_properties',
     ];
 
     /**
@@ -91,15 +102,6 @@ class LaraFile extends Model
     public function larafilesable(): MorphTo
     {
         return $this->morphTo();
-    }
-
-    public function delete(): ?bool
-    {
-        if (Storage::disk($this->attributes['disk'])->exists($this->fullPath)) {
-            Storage::disk($this->attributes['disk'])->delete($this->fullPath);
-        }
-
-        return parent::delete();
     }
 
     /**

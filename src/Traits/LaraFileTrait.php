@@ -9,6 +9,7 @@ use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Models\LaraFile;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Throwable;
@@ -65,43 +66,30 @@ trait LaraFileTrait
     //	}
 
     /**
-     * @param  null  $visibility
-     * @param  null  $description
-     * @param  null  $authorId
-     * @param  null  $name
-     *
      * @throws FileNotFoundException
      * @throws Throwable
      */
-    public function uploadHttpFile($uploadedFile, $disk, $type, $visibility = null, $description = null, $authorId = null, $name = null): LaraFile
+    public function uploadHttpFile(UploadedFile $uploadedFile, string $disk, string $type, $visibility = null, $name = null, array $customProperties = []): LaraFile
     {
         $laraFileUploader = (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'http_file'))->setDisk(disk: $disk)->setType(type: $type)->setModel(model: $this);
         if ($visibility) {
             $laraFileUploader->setVisibility(visibility: $visibility);
         }
-        if ($description) {
-            $laraFileUploader->setDescription(description: $description);
-        }
-        if ($authorId) {
-            $laraFileUploader->setAuthorId(authorId: $authorId);
-        }
         if ($name) {
             $laraFileUploader->setName(name: $name);
+        }
+        if (\count($customProperties)) {
+            $laraFileUploader->setCustomProperties(customProperties: $customProperties);
         }
 
         return $laraFileUploader->upload();
     }
 
     /**
-     * @param  null  $visibility
-     * @param  null  $description
-     * @param  null  $authorId
-     * @param  null  $name
-     *
-     * @throws FileNotFoundException *
-     * @throws Throwable *
+     * @throws FileNotFoundException
+     * @throws Throwable
      */
-    public function uploadHttpFiles(array $uploadedFiles, $disk, $type, $visibility = null, $description = null, $authorId = null, $name = null): Collection
+    public function uploadHttpFiles(array $uploadedFiles, string $disk, string $type, $visibility = null, $name = null, array $customProperties = []): Collection
     {
         if (\count($uploadedFiles) == 0) {
             return \collect();
@@ -110,20 +98,18 @@ trait LaraFileTrait
         $uploadedFilesCollection = \collect();
 
         foreach ($uploadedFiles as $uploadedFile) {
-            $uploadedFilesCollection->push($this->uploadHttpFile($uploadedFile, $disk, $type, $visibility, $description, $authorId, $name));
+            $uploadedFilesCollection->push($this->uploadHttpFile(uploadedFile: $uploadedFile, disk: $disk, type: $type, visibility: $visibility, name: $name,
+                customProperties: $customProperties));
         }
 
         return $uploadedFilesCollection;
     }
 
     /**
-     * @throws Throwable
-     * @throws UnsupportedDiskAdapterException
-     * @throws FileTypeIsNotPresentedException
      * @throws FileNotFoundException
-     * @throws UnableToUploadFileException
+     * @throws Throwable
      */
-    public function uploadBase64File($uploadedFile, $disk, $type, $visibility = null, $description = null, $authorId = null, $name = null): LaraFile
+    public function uploadBase64File(string $uploadedFile, string $disk, string $type, ?string $visibility = null, ?string $name = null, array $customProperties = []): LaraFile
     {
         $laraFileUploader = (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'base64_file'))->setDisk(disk: $disk)
             ->setType(type: $type)
@@ -131,14 +117,11 @@ trait LaraFileTrait
         if ($visibility) {
             $laraFileUploader->setVisibility(visibility: $visibility);
         }
-        if ($description) {
-            $laraFileUploader->setDescription(description: $description);
-        }
-        if ($authorId) {
-            $laraFileUploader->setAuthorId(authorId: $authorId);
-        }
         if ($name) {
             $laraFileUploader->setName(name: $name);
+        }
+        if (\count($customProperties)) {
+            $laraFileUploader->setCustomProperties(customProperties: $customProperties);
         }
 
         return $laraFileUploader->upload();
@@ -148,7 +131,7 @@ trait LaraFileTrait
      * @throws Throwable
      * @throws FileNotFoundException
      */
-    public function uploadBase64Files(array $uploadedFiles, $disk, $type, $visibility = null, $description = null, $authorId = null, $name = null): Collection
+    public function uploadBase64Files(array $uploadedFiles, string $disk, string $type, ?string $visibility = null, $name = null, array $customProperties = []): Collection
     {
         if (\count($uploadedFiles) == 0) {
             return \collect();
@@ -157,7 +140,8 @@ trait LaraFileTrait
         $uploadedFilesCollection = \collect();
 
         foreach ($uploadedFiles as $uploadedFile) {
-            $uploadedFilesCollection->push($this->uploadBase64File($uploadedFile, $disk, $type, $visibility, $description, $authorId, $name));
+            $uploadedFilesCollection->push($this->uploadBase64File(uploadedFile: $uploadedFile, disk: $disk, type: $type, visibility: $visibility, name: $name,
+                customProperties: $customProperties));
         }
 
         return $uploadedFilesCollection;
@@ -179,15 +163,10 @@ trait LaraFileTrait
     /**
      * Copy file from another model
      *
-     * @param  null  $visibility
-     * @param  null  $description
-     * @param  null  $authorId
-     * @param  null  $name
-     *
      * @throws FileNotFoundException
      * @throws Throwable
      */
-    public function copyFromAnotherLaraFile(LaraFile $laraFile, $disk = null, $type = null, $visibility = null, $description = null, $authorId = null, $name = null): LaraFile
+    public function copyFromAnotherLaraFile(LaraFile $laraFile, ?string $disk = null, ?string $type = null, ?string $visibility = null, ?string $name = null): LaraFile
     {
         $laraFileUploader = (new LaraFileUploader(uploadedFile: $laraFile, fileUploaderType: 'lara_file'))->setDisk(disk: $disk ?? $laraFile->disk)
             ->setType(type: $type ?? $laraFile->type)
@@ -208,6 +187,10 @@ trait LaraFileTrait
         $name = $name ?? $laraFile->name;
         if ($name !== null) {
             $laraFileUploader->setName(name: $name);
+        }
+
+        if (\count($laraFile->custom_properties)) {
+            $laraFileUploader->setCustomProperties(customProperties: $laraFile->custom_properties);
         }
 
         return $laraFileUploader->upload();

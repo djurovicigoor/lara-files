@@ -2,8 +2,9 @@
 
 namespace DjurovicIgoor\LaraFiles\Models\Observers;
 
-use Illuminate\Support\Str;
 use DjurovicIgoor\LaraFiles\Models\LaraFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class LaraFileObserver
 {
@@ -12,9 +13,16 @@ class LaraFileObserver
         if (empty($laraFile->id)) {
             $laraFile->id = Str::uuid()->toString();
         }
-        
+
         if (is_null($laraFile->order)) {
             $laraFile->setHighestOrderNumber();
+        }
+    }
+
+    public function deleteing(LaraFile $laraFile)
+    {
+        if (Storage::disk($laraFile->disk)->exists($laraFile->fullPath)) {
+            Storage::disk($laraFile->disk)->delete($laraFile->fullPath);
         }
     }
 }
