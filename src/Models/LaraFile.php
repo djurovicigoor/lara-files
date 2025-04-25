@@ -2,10 +2,10 @@
 
 namespace DjurovicIgoor\LaraFiles\Models;
 
-use DjurovicIgoor\LaraFiles\Traits\CustomProperties;
 use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Exceptions\VisibilityIsNotValidException;
+use DjurovicIgoor\LaraFiles\Traits\CustomProperties;
 use DjurovicIgoor\LaraFiles\Traits\Sortable;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
