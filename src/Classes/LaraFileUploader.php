@@ -67,20 +67,6 @@ class LaraFileUploader
     /**
      * @return LaraFileUploader
      *
-     * @throws UnsupportedDiskAdapterException|Throwable
-     */
-    public function setDisk(string $disk): static
-    {
-        throw_if(! array_key_exists($disk, config('filesystems.disks')), new UnsupportedDiskAdapterException($disk));
-
-        $this->disk = $disk;
-
-        return $this;
-    }
-
-    /**
-     * @return LaraFileUploader
-     *
      * @throws Throwable|FileTypeIsNotPresentedException
      */
     public function setType(string $type): static
@@ -135,6 +121,29 @@ class LaraFileUploader
         return $this;
     }
 
+    public function getDisk(): string
+    {
+        if (! $this->disk) {
+            return \config('lara-files.default_disk');
+        }
+
+        return $this->disk;
+    }
+
+    /**
+     * @return LaraFileUploader
+     *
+     * @throws UnsupportedDiskAdapterException|Throwable
+     */
+    public function setDisk(string $disk): static
+    {
+        throw_if(! array_key_exists($disk, config('filesystems.disks')), new UnsupportedDiskAdapterException($disk));
+
+        $this->disk = $disk;
+
+        return $this;
+    }
+
     /**
      * @return LaraFileUploader
      */
@@ -167,7 +176,7 @@ class LaraFileUploader
      */
     public function upload(): LaraFile
     {
-        \throw_if(! $this->disk, new UnsupportedDiskAdapterException($this->disk));
+        \throw_if(! $this->getDisk(), new UnsupportedDiskAdapterException($this->getDisk()));
 
         \throw_if(! $this->type, new FileTypeIsNotPresentedException);
 
@@ -183,14 +192,14 @@ class LaraFileUploader
 
         $fullPath = "$path/$fileHashName.$fileExtension";
 
-        $isSuccessfullyUploaded = Storage::disk($this->disk)->put($fullPath, $this->uploadedFile->getFileForUpload(), [
+        $isSuccessfullyUploaded = Storage::disk($this->getDisk())->put($fullPath, $this->uploadedFile->getFileForUpload(), [
             'visibility' => $this->getVisibility(),
         ]);
 
         \throw_if(! $isSuccessfullyUploaded, new UnableToUploadFileException);
 
         $laraFile = new LaraFile([
-            'disk' => $this->disk, 'path' => $path, 'hash_name' => $fileHashName, 'extension' => $fileExtension, 'name' => $fileOriginalName, 'type' => $this->type,
+            'disk' => $this->getDisk(), 'path' => $path, 'hash_name' => $fileHashName, 'extension' => $fileExtension, 'name' => $fileOriginalName, 'type' => $this->type,
             'visibility' => $this->getVisibility(), 'custom_properties' => $this->customProperties, 'description' => $this->description, 'author_id' => $this->authorId,
         ]);
 
@@ -199,8 +208,8 @@ class LaraFileUploader
         }
 
         if (! $laraFile->save()) {
-            if (Storage::disk($this->disk)->exists($fullPath)) {
-                Storage::disk($this->disk)->delete($fullPath);
+            if (Storage::disk($this->getDisk())->exists($fullPath)) {
+                Storage::disk($this->getDisk())->delete($fullPath);
             }
             throw new UnableToUploadFileException;
         }
@@ -215,26 +224,25 @@ class LaraFileUploader
     public static function uploadForOptimizationAndManipulation(
         $uploadedFile,
         $fileUploaderType,
-        $disk,
         $type,
+        $disk = null,
         $visibility = null,
-        $description = null,
-        $authorId = null,
-        $name = null
+        $name = null,
+        array $customProperties = []
     ): LaraFile {
-        $laraFileUploader = (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: $fileUploaderType))->setDisk(disk: $disk)->setType(type: $type);
+        $laraFileUploader = (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: $fileUploaderType))->setType(type: $type);
 
+        if ($disk) {
+            $laraFileUploader->setDisk(disk: $disk);
+        }
         if ($visibility) {
             $laraFileUploader->setVisibility(visibility: $visibility);
         }
-        if ($description) {
-            $laraFileUploader->setDescription(description: $description);
-        }
-        if ($authorId) {
-            $laraFileUploader->setAuthorId(authorId: $authorId);
-        }
         if ($name) {
             $laraFileUploader->setName(name: $name);
+        }
+        if (\count($customProperties)) {
+            $laraFileUploader->setCustomProperties(customProperties: $customProperties);
         }
 
         return $laraFileUploader->upload();

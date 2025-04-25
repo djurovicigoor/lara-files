@@ -87,7 +87,7 @@ class LaraFile extends Model
      * @var array
      */
     protected $fillable = [
-        'disk', 'path', 'hash_name', 'extension', 'name', 'type', 'visibility', 'description', 'author_id', 'larafilesable_type', 'larafilesable_id', 'custom_properties',
+        'disk', 'path', 'hash_name', 'extension', 'name', 'type', 'visibility', 'larafilesable_type', 'larafilesable_id', 'custom_properties',
     ];
 
     /**

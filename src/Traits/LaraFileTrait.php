@@ -69,9 +69,12 @@ trait LaraFileTrait
      * @throws FileNotFoundException
      * @throws Throwable
      */
-    public function uploadHttpFile(UploadedFile $uploadedFile, string $disk, string $type, $visibility = null, $name = null, array $customProperties = []): LaraFile
+    public function uploadHttpFile(UploadedFile $uploadedFile, string $type, ?string $disk = null, $visibility = null, $name = null, array $customProperties = []): LaraFile
     {
-        $laraFileUploader = (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'http_file'))->setDisk(disk: $disk)->setType(type: $type)->setModel(model: $this);
+        $laraFileUploader = (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'http_file'))->setType(type: $type)->setModel(model: $this);
+        if ($disk) {
+            $laraFileUploader->setDisk(disk: $disk);
+        }
         if ($visibility) {
             $laraFileUploader->setVisibility(visibility: $visibility);
         }
@@ -98,7 +101,7 @@ trait LaraFileTrait
         $uploadedFilesCollection = \collect();
 
         foreach ($uploadedFiles as $uploadedFile) {
-            $uploadedFilesCollection->push($this->uploadHttpFile(uploadedFile: $uploadedFile, disk: $disk, type: $type, visibility: $visibility, name: $name,
+            $uploadedFilesCollection->push($this->uploadHttpFile(uploadedFile: $uploadedFile, type: $type, disk: $disk, visibility: $visibility, name: $name,
                 customProperties: $customProperties));
         }
 
@@ -109,11 +112,18 @@ trait LaraFileTrait
      * @throws FileNotFoundException
      * @throws Throwable
      */
-    public function uploadBase64File(string $uploadedFile, string $disk, string $type, ?string $visibility = null, ?string $name = null, array $customProperties = []): LaraFile
-    {
-        $laraFileUploader = (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'base64_file'))->setDisk(disk: $disk)
-            ->setType(type: $type)
-            ->setModel(model: $this);
+    public function uploadBase64File(
+        string $uploadedFile,
+        string $type,
+        ?string $disk = null,
+        ?string $visibility = null,
+        ?string $name = null,
+        array $customProperties = []
+    ): LaraFile {
+        $laraFileUploader = (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'base64_file'))->setType(type: $type)->setModel(model: $this);
+        if ($disk) {
+            $laraFileUploader->setDisk(disk: $disk);
+        }
         if ($visibility) {
             $laraFileUploader->setVisibility(visibility: $visibility);
         }
@@ -131,7 +141,7 @@ trait LaraFileTrait
      * @throws Throwable
      * @throws FileNotFoundException
      */
-    public function uploadBase64Files(array $uploadedFiles, string $disk, string $type, ?string $visibility = null, $name = null, array $customProperties = []): Collection
+    public function uploadBase64Files(array $uploadedFiles, string $type, ?string $disk = null, ?string $visibility = null, $name = null, array $customProperties = []): Collection
     {
         if (\count($uploadedFiles) == 0) {
             return \collect();
@@ -140,7 +150,7 @@ trait LaraFileTrait
         $uploadedFilesCollection = \collect();
 
         foreach ($uploadedFiles as $uploadedFile) {
-            $uploadedFilesCollection->push($this->uploadBase64File(uploadedFile: $uploadedFile, disk: $disk, type: $type, visibility: $visibility, name: $name,
+            $uploadedFilesCollection->push($this->uploadBase64File(uploadedFile: $uploadedFile, type: $type, disk: $disk, visibility: $visibility, name: $name,
                 customProperties: $customProperties));
         }
 
@@ -199,9 +209,9 @@ trait LaraFileTrait
     /**
      * @throws Throwable
      */
-    public function addHttpFile($uploadedFile, $disk, $type): LaraFileUploader
+    public function addHttpFile(UploadedFile $uploadedFile, string $type): LaraFileUploader
     {
-        return (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'http_file'))->setDisk(disk: $disk)->setType(type: $type)->setModel(model: $this);
+        return (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'http_file'))->setType(type: $type)->setModel(model: $this);
     }
 
     /**
@@ -211,8 +221,8 @@ trait LaraFileTrait
      * @throws FileNotFoundException
      * @throws UnableToUploadFileException
      */
-    public function addBase64File($uploadedFile, $disk, $type): LaraFileUploader
+    public function addBase64File(string $uploadedFile, string $type): LaraFileUploader
     {
-        return (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'base64_file'))->setDisk(disk: $disk)->setType(type: $type)->setModel(model: $this);
+        return (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'base64_file'))->setType(type: $type)->setModel(model: $this);
     }
 }
