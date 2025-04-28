@@ -42,14 +42,14 @@ class LaraFile extends Model
      *
      * @var bool
      */
-    //    public $incrementing = false;
+    public $incrementing = false;
     
     /**
      * The "type" of the primary key ID.
      *
      * @var string
      */
-    //    protected $keyType = 'string';
+    protected $keyType = 'string';
     
     /**
      * The table associated with the model.

@@ -10,7 +10,7 @@ it('uploads a file without model in local storage', function () {
     $file = UploadedFile::fake()->image('avatar.jpg');
 
     $uploadedFile = (new LaraFileUploader($file))->setDisk('local')->setType('avatar')->upload();
-
+  dd($uploadedFile);
     Storage::disk('local')->assertExists($uploadedFile->data_path);
 
     $this->assertDatabaseHas('lara_files', [
