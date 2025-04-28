@@ -50,7 +50,7 @@ class LaraFile extends Model
      * @var string
      */
     protected $keyType = 'string';
-    
+
     /**
      * The table associated with the model.
      *
