@@ -45,7 +45,7 @@ abstract class TestCase extends Orchestra
     protected function defineDatabaseMigrations(): void
     {
         // Load package migrations
-        $this->loadMigrationsFrom(__DIR__.'/../src/database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 
     protected function setUpDatabase(Application $app): void
