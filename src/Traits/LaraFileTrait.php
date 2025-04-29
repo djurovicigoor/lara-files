@@ -105,7 +105,7 @@ trait LaraFileTrait
      * @throws FileNotFoundException
      * @throws Throwable
      */
-    public function uploadHttpFiles(array $uploadedFiles, string $disk, string $type, $visibility = null, $name = null, array $customProperties = []): Collection
+    public function uploadHttpFiles(array $uploadedFiles, string $type, ?string $disk = null, $visibility = null, $name = null, array $customProperties = []): Collection
     {
         if (\count($uploadedFiles) == 0) {
             return \collect();
@@ -196,16 +196,6 @@ trait LaraFileTrait
             ->setModel(model: $this);
 
         $laraFileUploader->setVisibility(visibility: $visibility ?? $laraFile->visibility);
-
-        $description = $description ?? $laraFile->description;
-        if ($description !== null) {
-            $laraFileUploader->setDescription(description: $description);
-        }
-
-        $authorId = $authorId ?? $laraFile->author_id;
-        if ($authorId !== null) {
-            $laraFileUploader->setAuthorId(authorId: $authorId);
-        }
 
         $name = $name ?? $laraFile->name;
         if ($name !== null) {
