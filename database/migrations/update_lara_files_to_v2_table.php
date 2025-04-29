@@ -72,16 +72,16 @@ return new class extends Migration
 
         // If you have any reference to lara_files_table . id in other tables , update here any FK columns and copy matching UUIDs .
 
-        //        if (DB::getDriverName() !== 'sqlite') {
         Schema::table('lara_files', function (Blueprint $table) {
             $table->dropColumn('id');
         });
-        //        }
 
         Schema::table('lara_files', function (Blueprint $table) {
             $table->renameColumn('uuid', 'id');
             $table->uuid('id')->primary()->change();
             $table->dropColumn('description');
+        });
+        Schema::table('lara_files', function (Blueprint $table) {
             $table->dropColumn('author_id');
         });
     }
