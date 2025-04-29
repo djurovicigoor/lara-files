@@ -52,3 +52,29 @@ it('it add file with trait function and the upload it', function () {
         'id' => $uploadedFile->id, 'larafilesable_type' => TestModel::class, 'larafilesable_id' => $testModel->id,
     ]);
 });
+
+it('upload file from one model to another', function () {
+    $file = UploadedFile::fake()->image('avatar.jpg');
+    $testModel = TestModel::first();
+
+    $uploadedFile = $testModel->uploadHttpFile($file, 'avatar');
+
+    Storage::disk('local')->assertExists($uploadedFile->data_path);
+
+    $this->assertDatabaseHas('lara_files', [
+        'id' => $uploadedFile->id, 'larafilesable_type' => TestModel::class, 'larafilesable_id' => $testModel->id,
+    ]);
+
+    $anotherTestModel = TestModel::create(['name' => 'test2']);
+    $uploadedFile2 = $anotherTestModel->copyFromAnotherLaraFile($uploadedFile);
+
+    Storage::disk('local')->assertExists($uploadedFile->data_path);
+    Storage::disk('local')->assertExists($uploadedFile2->data_path);
+
+    $this->assertDatabaseHas('lara_files', [
+        'id' => $uploadedFile->id, 'larafilesable_type' => TestModel::class, 'larafilesable_id' => $testModel->id,
+    ]);
+    $this->assertDatabaseHas('lara_files', [
+        'id' => $uploadedFile2->id, 'larafilesable_type' => TestModel::class, 'larafilesable_id' => $anotherTestModel->id,
+    ]);
+});
