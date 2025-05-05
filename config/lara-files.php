@@ -7,7 +7,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | The disk on which to store added files by default. Choose
-    | one or more of the disks you've configured in config/filesystems.php.
+    | one of the disks you've configured in config/filesystems.php.
     */
     'default_disk' => env('LARA_FILE_DISK', 'public'),
 
