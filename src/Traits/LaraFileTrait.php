@@ -2,21 +2,22 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
-use DjurovicIgoor\LaraFiles\Classes\LaraFileUploader;
-use DjurovicIgoor\LaraFiles\Exceptions\FileTypeIsNotPresentedException;
-use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
-use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
-use DjurovicIgoor\LaraFiles\Models\LaraFile;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Throwable;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Throwable;
+use DjurovicIgoor\LaraFiles\Models\LaraFile;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use DjurovicIgoor\LaraFiles\Classes\LaraFileUploader;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 
 trait LaraFileTrait
 {
+    /**
+     * @return void
+     */
     public static function bootLaraFileTrait(): void
     {
         static::deleting(function ($model) {
@@ -29,6 +30,12 @@ trait LaraFileTrait
         });
     }
 
+    /**
+     * @param $method
+     * @param $arguments
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|MorphMany|MorphOne|mixed|null
+     */
     public function __call($method, $arguments)
     {
         if (! empty(config('lara-files.types'))) {
@@ -79,6 +86,14 @@ trait LaraFileTrait
     //	}
 
     /**
+     * @param  UploadedFile  $uploadedFile
+     * @param  string  $type
+     * @param  string|null  $disk
+     * @param $visibility
+     * @param $name
+     * @param  array  $customProperties
+     *
+     * @return LaraFile
      * @throws FileNotFoundException
      * @throws Throwable
      */
@@ -102,6 +117,14 @@ trait LaraFileTrait
     }
 
     /**
+     * @param  array  $uploadedFiles
+     * @param  string  $type
+     * @param  string|null  $disk
+     * @param $visibility
+     * @param $name
+     * @param  array  $customProperties
+     *
+     * @return Collection
      * @throws FileNotFoundException
      * @throws Throwable
      */
@@ -114,14 +137,29 @@ trait LaraFileTrait
         $uploadedFilesCollection = \collect();
 
         foreach ($uploadedFiles as $uploadedFile) {
-            $uploadedFilesCollection->push($this->uploadHttpFile(uploadedFile: $uploadedFile, type: $type, disk: $disk, visibility: $visibility, name: $name,
-                customProperties: $customProperties));
+            $uploadedFilesCollection->push($this->uploadHttpFile(
+                uploadedFile: $uploadedFile,
+                type: $type,
+                disk: $disk,
+                visibility: $visibility,
+                name: $name,
+                customProperties: $customProperties
+            ));
         }
 
         return $uploadedFilesCollection;
     }
 
+
     /**
+     * @param  string  $uploadedFile
+     * @param  string  $type
+     * @param  string|null  $disk
+     * @param  string|null  $visibility
+     * @param  string|null  $name
+     * @param  array  $customProperties
+     *
+     * @return LaraFile
      * @throws FileNotFoundException
      * @throws Throwable
      */
@@ -150,9 +188,18 @@ trait LaraFileTrait
         return $laraFileUploader->upload();
     }
 
+
     /**
-     * @throws Throwable
+     * @param  array  $uploadedFiles
+     * @param  string  $type
+     * @param  string|null  $disk
+     * @param  string|null  $visibility
+     * @param $name
+     * @param  array  $customProperties
+     *
+     * @return Collection
      * @throws FileNotFoundException
+     * @throws Throwable
      */
     public function uploadBase64Files(array $uploadedFiles, string $type, ?string $disk = null, ?string $visibility = null, $name = null, array $customProperties = []): Collection
     {
@@ -163,8 +210,14 @@ trait LaraFileTrait
         $uploadedFilesCollection = \collect();
 
         foreach ($uploadedFiles as $uploadedFile) {
-            $uploadedFilesCollection->push($this->uploadBase64File(uploadedFile: $uploadedFile, type: $type, disk: $disk, visibility: $visibility, name: $name,
-                customProperties: $customProperties));
+            $uploadedFilesCollection->push($this->uploadBase64File(
+                uploadedFile: $uploadedFile,
+                type: $type,
+                disk: $disk,
+                visibility: $visibility,
+                name: $name,
+                customProperties: $customProperties
+            ));
         }
 
         return $uploadedFilesCollection;
@@ -173,11 +226,14 @@ trait LaraFileTrait
     /**
      * @return string
      */
-    public function getModelPath()
+    public function getModelPath(): string
     {
         return 'lara-files/'.strtolower(class_basename($this));
     }
 
+    /**
+     * @return MorphMany
+     */
     public function laraFiles(): MorphMany
     {
         return $this->morphMany(LaraFile::class, 'larafilesable');
@@ -186,14 +242,21 @@ trait LaraFileTrait
     /**
      * Copy file from another model
      *
+     * @param  LaraFile  $laraFile
+     * @param  string|null  $disk
+     * @param  string|null  $type
+     * @param  string|null  $visibility
+     * @param  string|null  $name
+     *
+     * @return LaraFile
      * @throws FileNotFoundException
      * @throws Throwable
      */
     public function copyFromAnotherLaraFile(LaraFile $laraFile, ?string $disk = null, ?string $type = null, ?string $visibility = null, ?string $name = null): LaraFile
     {
         $laraFileUploader = (new LaraFileUploader(uploadedFile: $laraFile, fileUploaderType: 'lara_file'))->setDisk(disk: $disk ?? $laraFile->disk)
-            ->setType(type: $type ?? $laraFile->type)
-            ->setModel(model: $this);
+                ->setType(type: $type ?? $laraFile->type)
+                ->setModel(model: $this);
 
         $laraFileUploader->setVisibility(visibility: $visibility ?? $laraFile->visibility);
 
@@ -210,6 +273,10 @@ trait LaraFileTrait
     }
 
     /**
+     * @param  UploadedFile  $uploadedFile
+     * @param  string  $type
+     *
+     * @return LaraFileUploader
      * @throws Throwable
      */
     public function addHttpFile(UploadedFile $uploadedFile, string $type): LaraFileUploader
@@ -218,11 +285,11 @@ trait LaraFileTrait
     }
 
     /**
+     * @param  string  $uploadedFile
+     * @param  string  $type
+     *
+     * @return LaraFileUploader
      * @throws Throwable
-     * @throws UnsupportedDiskAdapterException
-     * @throws FileTypeIsNotPresentedException
-     * @throws FileNotFoundException
-     * @throws UnableToUploadFileException
      */
     public function addBase64File(string $uploadedFile, string $type): LaraFileUploader
     {

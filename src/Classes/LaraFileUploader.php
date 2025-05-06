@@ -61,13 +61,15 @@ class LaraFileUploader
     }
 
     /**
+     * @param  string  $type
+     *
      * @return LaraFileUploader
      *
-     * @throws Throwable|FileTypeIsNotPresentedException
+     * @throws Throwable
      */
     public function setType(string $type): static
     {
-        \throw_if(! $type || $type == '', new FileTypeIsNotPresentedException);
+        \throw_if(! $type || $type == '', new FileTypeIsNotPresentedException());
 
         $this->type = $type;
 
@@ -75,6 +77,8 @@ class LaraFileUploader
     }
 
     /**
+     * @param  Model  $model
+     *
      * @return LaraFileUploader
      */
     public function setModel(Model $model): static
@@ -84,6 +88,9 @@ class LaraFileUploader
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getVisibility(): string
     {
         if (! $this->visibility) {
@@ -94,9 +101,11 @@ class LaraFileUploader
     }
 
     /**
+     * @param  string  $visibility
+     *
      * @return LaraFileUploader
      *
-     * @throws Throwable|VisibilityIsNotValidException
+     * @throws Throwable
      */
     public function setVisibility(string $visibility): static
     {
@@ -107,6 +116,9 @@ class LaraFileUploader
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getDisk(): string
     {
         if (! $this->disk) {
@@ -117,9 +129,11 @@ class LaraFileUploader
     }
 
     /**
+     * @param  string  $disk
+     *
      * @return LaraFileUploader
      *
-     * @throws UnsupportedDiskAdapterException|Throwable
+     * @throws Throwable
      */
     public function setDisk(string $disk): static
     {
@@ -131,6 +145,8 @@ class LaraFileUploader
     }
 
     /**
+     * @param  string  $name
+     *
      * @return LaraFileUploader
      */
     public function setName(string $name): static
@@ -140,6 +156,11 @@ class LaraFileUploader
         return $this;
     }
 
+    /**
+     * @param  array  $customProperties
+     *
+     * @return $this
+     */
     public function setCustomProperties(array $customProperties): self
     {
         $this->customProperties = $customProperties;
@@ -154,7 +175,7 @@ class LaraFileUploader
     {
         \throw_if(! $this->getDisk(), new UnsupportedDiskAdapterException($this->getDisk()));
 
-        \throw_if(! $this->type, new FileTypeIsNotPresentedException);
+        \throw_if(! $this->type, new FileTypeIsNotPresentedException());
 
         $fileExtension = $this->uploadedFile->getFileExtension();
         $fileOriginalName = $this->name ?? $this->uploadedFile->getFileOriginalName();
@@ -172,7 +193,7 @@ class LaraFileUploader
             'visibility' => $this->getVisibility(),
         ]);
 
-        \throw_if(! $isSuccessfullyUploaded, new UnableToUploadFileException);
+        \throw_if(! $isSuccessfullyUploaded, new UnableToUploadFileException());
 
         $laraFile = new LaraFile([
             'disk' => $this->getDisk(), 'path' => $path, 'hash_name' => $fileHashName, 'extension' => $fileExtension, 'name' => $fileOriginalName, 'type' => $this->type,
@@ -187,7 +208,7 @@ class LaraFileUploader
             if (Storage::disk($this->getDisk())->exists($fullPath)) {
                 Storage::disk($this->getDisk())->delete($fullPath);
             }
-            throw new UnableToUploadFileException;
+            throw new UnableToUploadFileException();
         }
 
         return $laraFile;

@@ -785,6 +785,9 @@ class Base64File extends AbstractFile
         'x-conference/x-cooltalk' => 'ice',
     ];
 
+    /**
+     * @var string|null
+     */
     private ?string $tempFileForDestruction = null;
 
     /**
@@ -811,13 +814,13 @@ class Base64File extends AbstractFile
      */
     private function fileIsValidBase64String(string $string): void
     {
-        \throw_if(! str_starts_with($string, 'data:'), new FileIsNotBase64EncodedStringException);
+        \throw_if(! str_starts_with($string, 'data:'), new FileIsNotBase64EncodedStringException());
 
         [$meta, $data] = explode(',', $string, 2) + [null, null];
 
-        \throw_if(! $meta || ! $data || ! str_contains($meta, ';base64'), new FileIsNotBase64EncodedStringException);
+        \throw_if(! $meta || ! $data || ! str_contains($meta, ';base64'), new FileIsNotBase64EncodedStringException());
 
-        \throw_if(! base64_decode($data, true), new FileIsNotBase64EncodedStringException);
+        \throw_if(! base64_decode($data, true), new FileIsNotBase64EncodedStringException());
     }
 
     /**
@@ -828,6 +831,9 @@ class Base64File extends AbstractFile
         return $this->guessExtension(Arr::get($this->parseBase64File(), 'mime_type'));
     }
 
+    /**
+     * @return string|null
+     */
     public function getFileOriginalName(): ?string
     {
         if (preg_match('/name=([^;]+)/', $this->file, $matches)) {
@@ -837,6 +843,11 @@ class Base64File extends AbstractFile
         return null;
     }
 
+    /**
+     * @param $mimeType
+     *
+     * @return string|null
+     */
     public function guessExtension($mimeType): ?string
     {
         return self::MIME_TYPES[strtolower($mimeType)] ?? null;

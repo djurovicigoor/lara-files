@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -58,7 +57,6 @@ return new class extends Migration
                 $table->timestamps();
             });
 
-            //            DB::statement('INSERT INTO lara_files SELECT * FROM lara_files_old');
             DB::statement('
     INSERT INTO lara_files (id, uuid, disk, path, hash_name, extension, name, type, visibility, "order", larafilesable_type, larafilesable_id, custom_properties, created_at, updated_at )
     SELECT id, uuid, disk, path, hash_name, extension, name, type, visibility, "order", larafilesable_type, larafilesable_id, custom_properties, created_at, updated_at
@@ -92,5 +90,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down(): void {}
+    public function down(): void
+    {
+    }
 };

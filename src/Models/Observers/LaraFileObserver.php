@@ -8,6 +8,11 @@ use Illuminate\Support\Str;
 
 class LaraFileObserver
 {
+    /**
+     * @param  LaraFile  $laraFile
+     *
+     * @return void
+     */
     public function creating(LaraFile $laraFile): void
     {
         if (empty($laraFile->id)) {
@@ -19,6 +24,11 @@ class LaraFileObserver
         }
     }
 
+    /**
+     * @param  LaraFile  $laraFile
+     *
+     * @return void
+     */
     public function deleting(LaraFile $laraFile): void
     {
         if (Storage::disk($laraFile->disk)->exists($laraFile->fullPath)) {

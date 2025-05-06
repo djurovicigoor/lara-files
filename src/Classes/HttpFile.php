@@ -18,18 +18,24 @@ class HttpFile extends AbstractFile
      */
     public function __construct($file)
     {
-        \throw_if(! $file instanceof UploadedFile, new FileIsNotInstanceOfUploadedFileClassException);
+        \throw_if(! $file instanceof UploadedFile, new FileIsNotInstanceOfUploadedFileClassException());
 
         $this->generateHashName();
 
         $this->file = $file;
     }
 
+    /**
+     * @return string
+     */
     public function getFileExtension(): string
     {
         return $this->file->extension();
     }
 
+    /**
+     * @return string
+     */
     public function getFileOriginalName(): string
     {
         return pathinfo($this->file->getClientOriginalName(), PATHINFO_FILENAME);

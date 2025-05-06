@@ -2,6 +2,7 @@
 
 namespace DjurovicIgoor\LaraFiles\Models;
 
+use Carbon\Carbon;
 use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
 use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Exceptions\VisibilityIsNotValidException;
@@ -24,18 +25,21 @@ use Throwable;
  * @property string $type
  * @property string $visibility
  * @property int $order
- * @property string $description
- * @property int $author_id
  * @property string $larafilesable_type
  * @property int $larafilesable_id
  * @property array $custom_properties
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read  int $size
  * @property-read string $mime_type
  * @property-read int $last_modified
+ * @property-read string $url
+ * @property-read string $full_path
  */
 class LaraFile extends Model
 {
-    use CustomProperties, Sortable;
+    use CustomProperties;
+    use Sortable;
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -99,6 +103,9 @@ class LaraFile extends Model
         'path', 'hash_name', 'larafilesable_type', 'larafilesable_id',
     ];
 
+    /**
+     * @return MorphTo
+     */
     public function larafilesable(): MorphTo
     {
         return $this->morphTo();
@@ -128,21 +135,33 @@ class LaraFile extends Model
         return Storage::disk($this->attributes['disk'])->url($this->fullPath);
     }
 
+    /**
+     * @return int|null
+     */
     public function getSizeAttribute(): ?int
     {
         return $this->getSize();
     }
 
+    /**
+     * @return string|null
+     */
     public function getMimeTypeAttribute(): ?string
     {
         return $this->getMimeType();
     }
 
+    /**
+     * @return int|null
+     */
     public function getLastModifiedAttribute(): ?int
     {
         return $this->getLastModified();
     }
 
+    /**
+     * @return string|null
+     */
     public function getContents(): ?string
     {
         if (Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
@@ -152,6 +171,12 @@ class LaraFile extends Model
         return Storage::disk($this->attributes['disk'])->get($this->fullPath);
     }
 
+    /**
+     * @param $name
+     * @param  array  $headers
+     *
+     * @return StreamedResponse|null
+     */
     public function download($name = null, array $headers = []): ?StreamedResponse
     {
         if (Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
@@ -161,6 +186,9 @@ class LaraFile extends Model
         return Storage::disk($this->attributes['disk'])->download($this->fullPath, $name, $headers);
     }
 
+    /**
+     * @return string|false|null
+     */
     public function getMimeType(): string|null|false
     {
         if (Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
@@ -170,6 +198,9 @@ class LaraFile extends Model
         return Storage::disk($this->attributes['disk'])->mimeType($this->fullPath);
     }
 
+    /**
+     * @return int|null
+     */
     public function getSize(): ?int
     {
         if (Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
@@ -179,6 +210,9 @@ class LaraFile extends Model
         return Storage::disk($this->attributes['disk'])->size($this->fullPath);
     }
 
+    /**
+     * @return int|null
+     */
     public function getLastModified(): ?int
     {
         if (Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
@@ -188,6 +222,9 @@ class LaraFile extends Model
         return Storage::disk($this->attributes['disk'])->lastModified($this->fullPath);
     }
 
+    /**
+     * @return string|null
+     */
     public function getDataPath(): ?string
     {
         if (! \in_array($this->attributes['disk'], ['local', 'public']) || Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
@@ -210,7 +247,7 @@ class LaraFile extends Model
             'visibility' => $this->visibility,
         ]);
 
-        throw_if(! $successfullyMoved, new UnableToUploadFileException);
+        throw_if(! $successfullyMoved, new UnableToUploadFileException());
 
         $this->update(['disk' => $disk]);
 
@@ -236,7 +273,10 @@ class LaraFile extends Model
     }
 
     /**
-     * @param  null  $expirationTime
+     * @param $expirationTime
+     * @param  array  $S3RequestParameters
+     *
+     * @return string|null
      */
     public function getTemporaryUrl($expirationTime = null, array $S3RequestParameters = []): ?string
     {

@@ -493,11 +493,11 @@ $avatar->getTemporaryUrl(now()->addMinutes(30));
 
 # Change log
 
-Please see the [changelog.md](changelog.md) for more information on what has changed recently.
+Please see the [changelog.md](CHANGELOG.md) for more information on what has changed recently.
 
 # Contributing
 
-Please see [contributing.md](contributing.md) for details and a todolist.
+Please see [contributing.md](CONTRIBUTING.md) for details and a todolist.
 
 # Security
 
@@ -523,4 +523,4 @@ If you found this project helpful or you learned something from the source code 
 
 # License
 
-MIT. Please see the [license file](license.md) for more information.
+MIT. Please see the [license file](LICENSE.md) for more information.
