@@ -21,13 +21,15 @@ interface UploadFileInterface
     public function getFileOriginalName(): ?string;
 
     /**
-     * Generate and retrieve a hash name for a file or entity.
+     * Retrieve a hash name for the file.
      *
      * @return string
      */
     public function getHashName(): string;
 
     /**
+     * Retrieve file binary representation for upload
+     *
      * @throws FileNotFoundException
      */
     public function getFileForUpload(): string;

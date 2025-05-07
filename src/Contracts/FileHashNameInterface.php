@@ -8,11 +8,15 @@ namespace DjurovicIgoor\LaraFiles\Contracts;
 interface FileHashNameInterface
 {
     /**
+     * Generate UUID Hash for file ame
+     *
      * @return void
      */
     public function generateHashName(): void;
 
     /**
+     * Retrieve a hash name for the file
+     *
      * @return string
      */
     public function getHashName(): string;

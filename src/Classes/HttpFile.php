@@ -2,18 +2,20 @@
 
 namespace DjurovicIgoor\LaraFiles\Classes;
 
-use DjurovicIgoor\LaraFiles\Exceptions\FileIsNotInstanceOfUploadedFileClassException;
-use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Throwable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
-use Throwable;
+use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use DjurovicIgoor\LaraFiles\Exceptions\FileIsNotInstanceOfUploadedFileClassException;
 
 class HttpFile extends AbstractFile
 {
     use HashNameTrait;
 
     /**
+     * @param $file
+     *
      * @throws FileIsNotInstanceOfUploadedFileClassException|Throwable
      */
     public function __construct($file)
@@ -42,6 +44,7 @@ class HttpFile extends AbstractFile
     }
 
     /**
+     * @return string
      * @throws FileNotFoundException
      */
     public function getFileForUpload(): string
