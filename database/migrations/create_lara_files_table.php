@@ -1,20 +1,18 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class CreateLaraFilesTable extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('lara_files', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('disk')->default('public')->comment('Disk Adapter must be defined in your config/filesustems.ph p ');
+            $table->string('disk')->default(config('lara-files.default_disk'))->comment('Disk Adapter must be defined in your config/filesystems.php');
             $table->string('path')->nullable()->comment('Relative file path.');
             $table->string('hash_name')->nullable()->comment('Hashed name of the file.');
             $table->string('extension')->nullable()->comment('Extension of the file.');
@@ -31,10 +29,9 @@ class CreateLaraFilesTable extends Migration
 
     /**
      * Reverse the migrations.
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('lara_files');
     }
-}
+};
