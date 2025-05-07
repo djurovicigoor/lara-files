@@ -21,7 +21,7 @@ Laravel projects that need organized file management.
 alt="lara-files preview" />
 </p>
 
-- [Chose version](#versions)
+- [Choose version](#versions)
 - [Installation](#installation)
 - [Configurations](#config-file)
 - [Database setup](#preparing-the-database)
