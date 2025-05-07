@@ -17,8 +17,7 @@ Built for Laravel 10, 11, and 12 support in mind, and it's ideal for modern
 Laravel projects that need organized file management.
 
 <p align="center">
-<img height="300" src="https://repository-images.githubusercontent.
-com/111447584/a5686a8f-a040-49e9-8bf9-bbf14ffeef70" 
+<img height="300" src="https://repository-images.githubusercontent.com/111447584/a5686a8f-a040-49e9-8bf9-bbf14ffeef70" 
 alt="lara-files preview" />
 </p>
 
@@ -32,6 +31,7 @@ alt="lara-files preview" />
 - [Associating HTTP file](#associating-http-filefiles)
 - [Associating base64 representation of file/files](#associating-base64-representation-of-filefiles)
 - [Ordering files](#ordering-files)
+- [Upload without model (temp file)](#upload-file-without-model-temp-file)
 - [Custom properties](#using-custom-properties)
 - [Change log](#change-log)
 - [Contributing](#contributing)
@@ -344,6 +344,23 @@ $uploadedFilesCollection = $post->uploadBase64Files($request->file('images'), 'a
 
 This method will return Collection of LaraFile models.
 
+# Upload file without model (temp file)
+
+If you need to upload and store file without certain model you need to call the static method of the
+`LaraFileUploader` class:
+
+```php
+$tempLaraFile = LaraFileUploader::uploadForOptimizationAndManipulation(
+    uploadedFile: $request->file('file'),
+    fileUploaderType: 'http_file',
+    type: 'image',
+    disk: 'local',
+    visibility: 'private',
+    name: 'Some image image',
+    customProperties: ['description' => 'Lorem ipsum']
+);
+```
+
 # Ordering files
 
 This package has a built-in feature to help you order the files in your project. By default, all inserted files
@@ -483,8 +500,8 @@ If you need to change visibility of the file you have to call `changeVisibility`
 $avatar->changeVisibility('public');
 ```
 
-Using the `getTemporaryUrl` method, you may create temporary URLs to files stored using the local and s3 drivers. 
-This method accepts DateTime instance specifying when the URL should expire and additional S3 request parameters, you 
+Using the `getTemporaryUrl` method, you may create temporary URLs to files stored using the local and s3 drivers.
+This method accepts DateTime instance specifying when the URL should expire and additional S3 request parameters, you
 may pass the array of request parameters as the second argument to the getTemporaryUrl method:
 
 ```php
