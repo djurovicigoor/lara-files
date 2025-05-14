@@ -22,14 +22,14 @@ trait LaraFileTrait
     {
         static::deleting(function ($model) {
             if (in_array(SoftDeletes::class, class_uses_recursive($model))) {
-                if (! $model->forceDeleting) {
+                if ( ! $model->forceDeleting) {
                     return;
                 }
             }
-            $model->laraFiles()->cursor()->each(fn (LaraFile $laraFile) => $laraFile->delete());
+            $model->laraFiles()->cursor()->each(fn(LaraFile $laraFile) => $laraFile->delete());
         });
     }
-
+    
     /**
      * @param $method
      * @param $arguments
@@ -38,10 +38,16 @@ trait LaraFileTrait
      */
     public function __call($method, $arguments)
     {
-        if (! empty(config('lara-files.types'))) {
+        if ( ! empty(config('lara-files.types'))) {
             foreach (config('lara-files.types') as $value) {
                 if ($method == $value) {
                     return $this->morphOne(LaraFile::class, 'larafilesable')->where('type', $value);
+                }
+                if ($method == Str::camel($value)) {
+                    return $this->morphOne(LaraFile::class, 'larafilesable')->where('type', $value);
+                }
+                if ($method == Str::plural(Str::camel($value))) {
+                    return $this->morphMany(LaraFile::class, 'larafilesable')->where('type', $value);
                 }
                 if ($method == Str::plural($value)) {
                     return $this->morphMany(LaraFile::class, 'larafilesable')->where('type', $value);
@@ -54,10 +60,10 @@ trait LaraFileTrait
                 }
             }
         }
-
+        
         return parent::__call($method, $arguments);
     }
-
+    
     //	/**
     //	 * @param       $method
     //	 * @param       $arguments
@@ -84,7 +90,7 @@ trait LaraFileTrait
     //		// and hydrate the relationship's value on the "relationships" array.
     //		return $this->getRelationshipFromMethod($key);
     //	}
-
+    
     /**
      * @param  UploadedFile  $uploadedFile
      * @param  string  $type
@@ -112,10 +118,10 @@ trait LaraFileTrait
         if (\count($customProperties)) {
             $laraFileUploader->setCustomProperties(customProperties: $customProperties);
         }
-
+        
         return $laraFileUploader->upload();
     }
-
+    
     /**
      * @param  array  $uploadedFiles
      * @param  string  $type
@@ -133,24 +139,17 @@ trait LaraFileTrait
         if (\count($uploadedFiles) == 0) {
             return \collect();
         }
-
+        
         $uploadedFilesCollection = \collect();
-
+        
         foreach ($uploadedFiles as $uploadedFile) {
-            $uploadedFilesCollection->push($this->uploadHttpFile(
-                uploadedFile: $uploadedFile,
-                type: $type,
-                disk: $disk,
-                visibility: $visibility,
-                name: $name,
-                customProperties: $customProperties
-            ));
+            $uploadedFilesCollection->push($this->uploadHttpFile(uploadedFile: $uploadedFile, type: $type, disk: $disk, visibility: $visibility, name: $name,
+                customProperties: $customProperties));
         }
-
+        
         return $uploadedFilesCollection;
     }
-
-
+    
     /**
      * @param  string  $uploadedFile
      * @param  string  $type
@@ -184,11 +183,10 @@ trait LaraFileTrait
         if (\count($customProperties)) {
             $laraFileUploader->setCustomProperties(customProperties: $customProperties);
         }
-
+        
         return $laraFileUploader->upload();
     }
-
-
+    
     /**
      * @param  array  $uploadedFiles
      * @param  string  $type
@@ -206,23 +204,17 @@ trait LaraFileTrait
         if (\count($uploadedFiles) == 0) {
             return \collect();
         }
-
+        
         $uploadedFilesCollection = \collect();
-
+        
         foreach ($uploadedFiles as $uploadedFile) {
-            $uploadedFilesCollection->push($this->uploadBase64File(
-                uploadedFile: $uploadedFile,
-                type: $type,
-                disk: $disk,
-                visibility: $visibility,
-                name: $name,
-                customProperties: $customProperties
-            ));
+            $uploadedFilesCollection->push($this->uploadBase64File(uploadedFile: $uploadedFile, type: $type, disk: $disk, visibility: $visibility, name: $name,
+                customProperties: $customProperties));
         }
-
+        
         return $uploadedFilesCollection;
     }
-
+    
     /**
      * @return string
      */
@@ -230,7 +222,7 @@ trait LaraFileTrait
     {
         return 'lara-files/'.strtolower(class_basename($this));
     }
-
+    
     /**
      * @return MorphMany
      */
@@ -238,7 +230,7 @@ trait LaraFileTrait
     {
         return $this->morphMany(LaraFile::class, 'larafilesable');
     }
-
+    
     /**
      * Copy file from another model
      *
@@ -255,23 +247,23 @@ trait LaraFileTrait
     public function copyFromAnotherLaraFile(LaraFile $laraFile, ?string $disk = null, ?string $type = null, ?string $visibility = null, ?string $name = null): LaraFile
     {
         $laraFileUploader = (new LaraFileUploader(uploadedFile: $laraFile, fileUploaderType: 'lara_file'))->setDisk(disk: $disk ?? $laraFile->disk)
-                ->setType(type: $type ?? $laraFile->type)
-                ->setModel(model: $this);
-
+            ->setType(type: $type ?? $laraFile->type)
+            ->setModel(model: $this);
+        
         $laraFileUploader->setVisibility(visibility: $visibility ?? $laraFile->visibility);
-
+        
         $name = $name ?? $laraFile->name;
         if ($name !== null) {
             $laraFileUploader->setName(name: $name);
         }
-
+        
         if (\count($laraFile->custom_properties)) {
             $laraFileUploader->setCustomProperties(customProperties: $laraFile->custom_properties);
         }
-
+        
         return $laraFileUploader->upload();
     }
-
+    
     /**
      * @param  UploadedFile  $uploadedFile
      * @param  string  $type
@@ -283,7 +275,7 @@ trait LaraFileTrait
     {
         return (new LaraFileUploader(uploadedFile: $uploadedFile, fileUploaderType: 'http_file'))->setType(type: $type)->setModel(model: $this);
     }
-
+    
     /**
      * @param  string  $uploadedFile
      * @param  string  $type
