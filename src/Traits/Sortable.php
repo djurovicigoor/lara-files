@@ -25,7 +25,10 @@ trait Sortable
             return 0;
         }
 
-        return (int) static::where('larafilesable_type', $this->larafilesable_type)->where('larafilesable_id', $this->larafilesable_id)->max($this->getOrderColumnName());
+        return (int) static::where('larafilesable_type', $this->larafilesable_type)
+            ->where('larafilesable_id', $this->larafilesable_id)
+            ->where('type', $this->type)
+            ->max($this->getOrderColumnName());
     }
 
     /**
