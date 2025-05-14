@@ -21,7 +21,7 @@ trait Sortable
      */
     public function getHighestOrderNumber(): int
     {
-        if (! $this->larafilesable_type && ! $this->larafilesable_id) {
+        if (! $this->larafilesable_type && ! $this->larafilesable_id && ! $this->type) {
             return 0;
         }
 
