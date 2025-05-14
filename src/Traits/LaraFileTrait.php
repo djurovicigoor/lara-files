@@ -55,7 +55,13 @@ trait LaraFileTrait
                 if ($method == 'get'.ucwords($value)) {
                     return $this->morphOne(LaraFile::class, 'larafilesable')->where('type', $value)->first();
                 }
+                if ($method == 'get'.ucwords(Str::camel($value))) {
+                    return $this->morphOne(LaraFile::class, 'larafilesable')->where('type', $value)->first();
+                }
                 if ($method == 'get'.Str::plural(ucwords($value))) {
+                    return $this->morphMany(LaraFile::class, 'larafilesable')->where('type', $value)->get();
+                }
+                if ($method == 'get'.Str::plural(ucwords(Str::camel($value)))) {
                     return $this->morphMany(LaraFile::class, 'larafilesable')->where('type', $value)->get();
                 }
             }
