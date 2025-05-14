@@ -41,42 +41,42 @@ class LaraFile extends Model
 {
     use CustomProperties;
     use Sortable;
-    
+
     /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool
      */
     public $incrementing = false;
-    
+
     /**
      * The "type" of the primary key ID.
      *
      * @var string
      */
     protected $keyType = 'string';
-    
+
     /**
      * The table associated with the model.
      *
      * @var string
      */
     protected $table = 'lara_files';
-    
+
     /**
      * The attributes that aren't mass assignable.
      *
      * @var array
      */
     protected $guarded = ['id'];
-    
+
     /**
      * The accessors to append to the model's array form.
      *
      * @var array
      */
     protected $appends = ['url', 'fullPath'];
-    
+
     /**
      * The attributes that should be cast.
      *
@@ -85,7 +85,7 @@ class LaraFile extends Model
     protected $casts = [
         'custom_properties' => 'array',
     ];
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -104,7 +104,7 @@ class LaraFile extends Model
         'order',
         'custom_properties',
     ];
-    
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -116,7 +116,7 @@ class LaraFile extends Model
         'larafilesable_type',
         'larafilesable_id',
     ];
-    
+
     /**
      * @return MorphTo
      */
@@ -124,7 +124,7 @@ class LaraFile extends Model
     {
         return $this->morphTo();
     }
-    
+
     /**
      * @return Builder
      */
@@ -132,7 +132,7 @@ class LaraFile extends Model
     {
         return parent::newQuery()->ordered();
     }
-    
+
     /**
      * Return relative path to the file
      *
@@ -142,7 +142,7 @@ class LaraFile extends Model
     {
         return "{$this->attributes['path']}/{$this->attributes['hash_name']}.{$this->attributes['extension']}";
     }
-    
+
     /**
      * Return full url to the file
      *
@@ -153,10 +153,10 @@ class LaraFile extends Model
         if ($this->attributes['disk'] === 'local' || Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
             return null;
         }
-        
+
         return Storage::disk($this->attributes['disk'])->url($this->fullPath);
     }
-    
+
     /**
      * @return int|null
      */
@@ -164,7 +164,7 @@ class LaraFile extends Model
     {
         return $this->getSize();
     }
-    
+
     /**
      * @return string|null
      */
@@ -172,7 +172,7 @@ class LaraFile extends Model
     {
         return $this->getMimeType();
     }
-    
+
     /**
      * @return int|null
      */
@@ -180,7 +180,7 @@ class LaraFile extends Model
     {
         return $this->getLastModified();
     }
-    
+
     /**
      * @return string|null
      */
@@ -189,10 +189,10 @@ class LaraFile extends Model
         if (Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
             return null;
         }
-        
+
         return Storage::disk($this->attributes['disk'])->get($this->fullPath);
     }
-    
+
     /**
      * @param $name
      * @param  array  $headers
@@ -204,10 +204,10 @@ class LaraFile extends Model
         if (Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
             return null;
         }
-        
+
         return Storage::disk($this->attributes['disk'])->download($this->fullPath, $name, $headers);
     }
-    
+
     /**
      * @return string|false|null
      */
@@ -216,10 +216,10 @@ class LaraFile extends Model
         if (Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
             return null;
         }
-        
+
         return Storage::disk($this->attributes['disk'])->mimeType($this->fullPath);
     }
-    
+
     /**
      * @return int|null
      */
@@ -228,10 +228,10 @@ class LaraFile extends Model
         if (Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
             return null;
         }
-        
+
         return Storage::disk($this->attributes['disk'])->size($this->fullPath);
     }
-    
+
     /**
      * @return int|null
      */
@@ -240,60 +240,60 @@ class LaraFile extends Model
         if (Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
             return null;
         }
-        
+
         return Storage::disk($this->attributes['disk'])->lastModified($this->fullPath);
     }
-    
+
     /**
      * @return string|null
      */
     public function getDataPath(): ?string
     {
-        if ( ! \in_array($this->attributes['disk'], ['local', 'public']) || Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
+        if (! \in_array($this->attributes['disk'], ['local', 'public']) || Storage::disk($this->attributes['disk'])->missing($this->fullPath)) {
             return null;
         }
-        
+
         return Storage::disk($this->attributes['disk'])->path($this->fullPath);
     }
-    
+
     /**
      * @throws UnsupportedDiskAdapterException|UnableToUploadFileException|Throwable
      */
     public function changeDisk(string $disk): ?LaraFile
     {
         $oldDisk = $this->attributes['disk'];
-        
+
         throw_if(! array_key_exists($disk, config('filesystems.disks')), new UnsupportedDiskAdapterException($disk));
-        
+
         $successfullyMoved = Storage::disk($disk)->put($this->full_path, Storage::disk($this->attributes['disk'])->get($this->full_path), [
             'visibility' => $this->visibility,
         ]);
-        
+
         throw_if(! $successfullyMoved, new UnableToUploadFileException());
-        
+
         $this->update(['disk' => $disk]);
-        
+
         Storage::disk($oldDisk)->delete($this->full_path);
-        
+
         return $this->fresh();
     }
-    
+
     /**
      * @throws VisibilityIsNotValidException|Throwable
      */
     public function changeVisibility($visibility): ?LaraFile
     {
         \throw_if(! in_array($visibility, ['public', 'private']), new VisibilityIsNotValidException($visibility));
-        
+
         $successfullyUpdated = Storage::disk($this->attributes['disk'])->setVisibility($this->full_path, $visibility);
-        
+
         throw_if(! $successfullyUpdated, new Exception('Unable to change visibility.', 500));
-        
+
         $this->update(['visibility' => $visibility]);
-        
+
         return $this->fresh();
     }
-    
+
     /**
      * @param $expirationTime
      * @param  array  $S3RequestParameters
@@ -302,10 +302,10 @@ class LaraFile extends Model
      */
     public function getTemporaryUrl($expirationTime = null, array $S3RequestParameters = []): ?string
     {
-        if ( ! $expirationTime) {
+        if (! $expirationTime) {
             $expirationTime = now()->addMinutes(5);
         }
-        
+
         return Storage::disk($this->attributes['disk'])->temporaryUrl($this->full_path, $expirationTime, $S3RequestParameters);
     }
 }
