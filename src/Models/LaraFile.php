@@ -150,7 +150,7 @@ class LaraFile extends Model
      */
     public function getUrlAttribute()
     {
-        //            || Storage::disk($this->attributes['disk'])->missing($this->fullPath)
+        // Storage::disk($this->attributes['disk'])->missing($this->fullPath)
 
         // Optimization: fast base URL
         $baseUrl = match ($this->attributes['disk']) {
