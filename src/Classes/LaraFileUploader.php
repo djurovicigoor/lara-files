@@ -2,27 +2,20 @@
 
 namespace DjurovicIgoor\LaraFiles\Classes;
 
+use Throwable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use DjurovicIgoor\LaraFiles\Models\LaraFile;
 use DjurovicIgoor\LaraFiles\Contracts\UploadFileInterface;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
+use DjurovicIgoor\LaraFiles\Exceptions\VisibilityIsNotValidException;
+use DjurovicIgoor\LaraFiles\Exceptions\FileTypeIsNotPresentedException;
+use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 use DjurovicIgoor\LaraFiles\Exceptions\FileIsNotBase64EncodedStringException;
 use DjurovicIgoor\LaraFiles\Exceptions\FileIsNotInstanceOfLaraFileModelException;
 use DjurovicIgoor\LaraFiles\Exceptions\FileIsNotInstanceOfUploadedFileClassException;
-use DjurovicIgoor\LaraFiles\Exceptions\FileTypeIsNotPresentedException;
-use DjurovicIgoor\LaraFiles\Exceptions\UnableToUploadFileException;
-use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
-use DjurovicIgoor\LaraFiles\Exceptions\VisibilityIsNotValidException;
-use DjurovicIgoor\LaraFiles\Models\LaraFile;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
-use Throwable;
 
-/**
- * Class LaraFileUploader
- *
- * Handles the uploading of files with configurable options such as disk, type, visibility, and name.
- * Provides methods to define file-related behaviors and supports associating uploaded files with a model instance.
- * Implements file storage and supports throwing relevant exceptions during file operations or validation failures.
- */
 class LaraFileUploader
 {
     private UploadFileInterface $uploadedFile;
@@ -40,11 +33,8 @@ class LaraFileUploader
     private ?Model $model = null;
 
     /**
-     * Constructor to initialize the uploaded file based on the type of file uploader provided.
-     *
      * @param  mixed  $uploadedFile  The file being uploaded.
      * @param  string  $fileUploaderType  The type of file uploader. Can be 'http_file', 'base64_file', or 'lara_file'.
-     *
      * @throws FileIsNotInstanceOfUploadedFileClassException|FileIsNotBase64EncodedStringException|FileIsNotInstanceOfLaraFileModelException|Throwable
      */
     public function __construct(mixed $uploadedFile, string $fileUploaderType = 'http_file')
@@ -62,9 +52,7 @@ class LaraFileUploader
 
     /**
      * @param  string  $type
-     *
      * @return LaraFileUploader
-     *
      * @throws Throwable
      */
     public function setType(string $type): static
@@ -78,7 +66,6 @@ class LaraFileUploader
 
     /**
      * @param  Model  $model
-     *
      * @return LaraFileUploader
      */
     public function setModel(Model $model): static
@@ -102,9 +89,7 @@ class LaraFileUploader
 
     /**
      * @param  string  $visibility
-     *
      * @return LaraFileUploader
-     *
      * @throws Throwable
      */
     public function setVisibility(string $visibility): static
@@ -130,9 +115,7 @@ class LaraFileUploader
 
     /**
      * @param  string  $disk
-     *
      * @return LaraFileUploader
-     *
      * @throws Throwable
      */
     public function setDisk(string $disk): static
@@ -146,7 +129,6 @@ class LaraFileUploader
 
     /**
      * @param  string  $name
-     *
      * @return LaraFileUploader
      */
     public function setName(string $name): static
@@ -158,7 +140,6 @@ class LaraFileUploader
 
     /**
      * @param  array  $customProperties
-     *
      * @return $this
      */
     public function setCustomProperties(array $customProperties): self
@@ -196,7 +177,7 @@ class LaraFileUploader
         \throw_if(! $isSuccessfullyUploaded, new UnableToUploadFileException());
 
         $laraFile = new LaraFile([
-            'disk' => $this->getDisk(), 'path' => $path, 'hash_name' => $fileHashName, 'extension' => $fileExtension, 'name' => $fileOriginalName, 'type' => $this->type,
+            'disk'       => $this->getDisk(), 'path' => $path, 'hash_name' => $fileHashName, 'extension' => $fileExtension, 'name' => $fileOriginalName, 'type' => $this->type,
             'visibility' => $this->getVisibility(), 'custom_properties' => $this->customProperties,
         ]);
 

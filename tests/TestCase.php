@@ -4,11 +4,11 @@ namespace Tests;
 
 namespace Djurovicigoor\LaraFiles\Tests;
 
+use Illuminate\Foundation\Application;
+use Illuminate\Database\Schema\Blueprint;
+use Orchestra\Testbench\TestCase as Orchestra;
 use DjurovicIgoor\LaraFiles\LaraFileServiceProvider;
 use Djurovicigoor\LaraFiles\Tests\TestSupport\TestModels\TestModel;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Foundation\Application;
-use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {
@@ -35,7 +35,6 @@ abstract class TestCase extends Orchestra
 
     protected function getEnvironmentSetUp($app): void
     {
-        // Set up in-memory SQLite database
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
             'driver' => 'sqlite', 'database' => ':memory:', 'prefix' => '',
@@ -44,7 +43,6 @@ abstract class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations(): void
     {
-        // Load package migrations
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 

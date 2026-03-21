@@ -2,14 +2,13 @@
 
 namespace DjurovicIgoor\LaraFiles\Traits;
 
-use DjurovicIgoor\LaraFiles\Models\LaraFile;
 use Illuminate\Support\Arr;
+use DjurovicIgoor\LaraFiles\Models\LaraFile;
 
 trait CustomProperties
 {
     /**
      * @param  string  $propertyName
-     *
      * @return bool
      */
     public function hasCustomProperty(string $propertyName): bool
@@ -18,11 +17,8 @@ trait CustomProperties
     }
 
     /**
-     * Get the value of custom property with the given name.
-     *
      * @param  string  $propertyName
      * @param  mixed|null  $default
-     *
      * @return mixed
      */
     public function getCustomProperty(string $propertyName, mixed $default = null): mixed
@@ -33,7 +29,6 @@ trait CustomProperties
     /**
      * @param  string  $name
      * @param  mixed  $value
-     *
      * @return CustomProperties|LaraFile
      */
     public function setCustomProperty(string $name, mixed $value): self
@@ -49,7 +44,6 @@ trait CustomProperties
 
     /**
      * @param  string  $name
-     *
      * @return CustomProperties|LaraFile
      */
     public function forgetCustomProperty(string $name): self

@@ -43,43 +43,31 @@ class LaraFile extends Model
     use Sortable;
 
     /**
-     * Indicates if the IDs are auto-incrementing.
-     *
      * @var bool
      */
     public $incrementing = false;
 
     /**
-     * The "type" of the primary key ID.
-     *
      * @var string
      */
     protected $keyType = 'string';
 
     /**
-     * The table associated with the model.
-     *
      * @var string
      */
     protected $table = 'lara_files';
 
     /**
-     * The attributes that aren't mass assignable.
-     *
      * @var array
      */
     protected $guarded = ['id'];
 
     /**
-     * The accessors to append to the model's array form.
-     *
      * @var array
      */
     protected $appends = ['url', 'fullPath'];
 
     /**
-     * The attributes that should be cast.
-     *
      * @var array
      */
     protected $casts = [
@@ -87,8 +75,6 @@ class LaraFile extends Model
     ];
 
     /**
-     * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = [
@@ -106,8 +92,6 @@ class LaraFile extends Model
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
      * @var array
      */
     protected $hidden = [
@@ -134,8 +118,6 @@ class LaraFile extends Model
     }
 
     /**
-     * Return relative path to the file
-     *
      * @return string
      */
     public function getFullPathAttribute()
@@ -144,20 +126,15 @@ class LaraFile extends Model
     }
 
     /**
-     * Return full url to the file
-     *
      * @return string
      */
     public function getUrlAttribute()
     {
-        // Storage::disk($this->attributes['disk'])->missing($this->fullPath)
-
-        // Optimization: fast base URL
         $baseUrl = match ($this->attributes['disk']) {
-            'public' => config('filesystems.disks.public.url'),
-            's3' => config('filesystems.disks.s3.url'),
+            'public'   => config('filesystems.disks.public.url'),
+            's3'       => config('filesystems.disks.s3.url'),
             'DOSpaces' => config('filesystems.disks.DOSpaces.url'),
-            default => null,
+            default    => null,
         };
         $baseUrl = \rtrim($baseUrl, '/');
 
@@ -203,7 +180,6 @@ class LaraFile extends Model
     /**
      * @param $name
      * @param  array  $headers
-     *
      * @return StreamedResponse|null
      */
     public function download($name = null, array $headers = []): ?StreamedResponse
@@ -304,7 +280,6 @@ class LaraFile extends Model
     /**
      * @param $expirationTime
      * @param  array  $S3RequestParameters
-     *
      * @return string|null
      */
     public function getTemporaryUrl($expirationTime = null, array $S3RequestParameters = []): ?string

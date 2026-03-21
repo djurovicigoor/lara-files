@@ -1,7 +1,7 @@
 <?php
 
-use Djurovicigoor\LaraFiles\Tests\TestSupport\TestModels\TestModel;
 use Illuminate\Http\UploadedFile;
+use Djurovicigoor\LaraFiles\Tests\TestSupport\TestModels\TestModel;
 
 beforeEach(function () {
     Storage::fake('local');

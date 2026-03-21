@@ -15,7 +15,6 @@ class HttpFile extends AbstractFile
 
     /**
      * @param $file
-     *
      * @throws FileIsNotInstanceOfUploadedFileClassException|Throwable
      */
     public function __construct($file)

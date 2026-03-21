@@ -33,7 +33,6 @@ trait Sortable
 
     /**
      * @param  Builder  $query
-     *
      * @return Builder
      */
     public function scopeOrdered(Builder $query): Builder
@@ -44,7 +43,6 @@ trait Sortable
     /**
      * @param  array  $ids
      * @param  int  $startOrder
-     *
      * @return void
      */
     public static function setNewOrder(array $ids, int $startOrder = 1): void

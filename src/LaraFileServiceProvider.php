@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace DjurovicIgoor\LaraFiles;
 
-use DjurovicIgoor\LaraFiles\Models\LaraFile;
-use DjurovicIgoor\LaraFiles\Models\Observers\LaraFileObserver;
 use Spatie\LaravelPackageTools\Package;
+use DjurovicIgoor\LaraFiles\Models\LaraFile;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use DjurovicIgoor\LaraFiles\Models\Observers\LaraFileObserver;
 
 class LaraFileServiceProvider extends PackageServiceProvider
 {
     /**
      * @param  Package  $package
-     *
      * @return void
      */
     public function configurePackage(Package $package): void
@@ -26,10 +25,6 @@ class LaraFileServiceProvider extends PackageServiceProvider
      */
     public function packageBooted(): void
     {
-        //        $laraFileClass = config('config_key', LaraFile::class);
-        //        $laraFileObserverClass = config('config_key', LaraFileObserver::class);
-        //
-        //        $laraFileClass::observe(new $laraFileObserverClass);
         LaraFile::observe(LaraFileObserver::class);
     }
 }

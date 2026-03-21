@@ -5,9 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('lara_files', function (Blueprint $table) {
@@ -29,7 +26,7 @@ return new class () extends Migration {
                     $customProperties['author_id'] = $item->author_id;
                 }
                 DB::table('lara_files')->where('id', $item->id)->update([
-                        'uuid' => (string) Str::uuid(), 'custom_properties' => $customProperties,
+                    'uuid' => (string) Str::uuid(), 'custom_properties' => $customProperties,
                 ]);
             });
         });
@@ -39,7 +36,7 @@ return new class () extends Migration {
             Schema::rename('lara_files', 'lara_files_old');
 
             Schema::create('lara_files', function (Blueprint $table) {
-                $table->unsignedBigInteger('id'); // or uuid or whatever new type
+                $table->unsignedBigInteger('id');
                 $table->uuid()->nullable();
                 $table->string('disk')->default('public')->comment('Disk Adapter must be defined in your config/filesystems.php');
                 $table->string('path')->nullable()->comment('Relative file path.');
@@ -68,8 +65,6 @@ return new class () extends Migration {
             DB::statement('ALTER TABLE lara_files DROP PRIMARY KEY, ADD PRIMARY KEY (uuid);');
         }
 
-        // If you have any reference to lara_files_table . id in other tables , update here any FK columns and copy matching UUIDs .
-
         Schema::table('lara_files', function (Blueprint $table) {
             $table->dropColumn('id');
         });
@@ -89,9 +84,6 @@ return new class () extends Migration {
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
     }

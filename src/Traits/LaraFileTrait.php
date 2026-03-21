@@ -33,7 +33,6 @@ trait LaraFileTrait
     /**
      * @param $method
      * @param $arguments
-     *
      * @return \Illuminate\Database\Eloquent\Collection|MorphMany|MorphOne|mixed|null
      */
     public function __call($method, $arguments)
@@ -70,33 +69,10 @@ trait LaraFileTrait
         return parent::__call($method, $arguments);
     }
 
-    //	/**
     //	 * @param       $method
     //	 * @param       $arguments
     //	 * @param mixed $key
-    //	 *
     //	 * @return mixed
-    //	 */
-    //	public function getRelationValue($key)
-    //	{
-    //		if ($this->relationLoaded($key)) {
-    //			return $this->relations[$key];
-    //		}
-    //
-    //		if (!$this->isRelation($key) && !(in_array($key, config('lara-files.types')) || in_array(str_singular($key), config('lara-files.types')))) {
-    //			return;
-    //		}
-    //
-    //		if ($this->preventsLazyLoading) {
-    //			$this->handleLazyLoadingViolation($key);
-    //		}
-    //
-    //		// If the "attribute" exists as a method on the model, we will just assume
-    //		// it is a relationship and will load and return results from the query
-    //		// and hydrate the relationship's value on the "relationships" array.
-    //		return $this->getRelationshipFromMethod($key);
-    //	}
-
     /**
      * @param  UploadedFile  $uploadedFile
      * @param  string  $type
@@ -104,7 +80,6 @@ trait LaraFileTrait
      * @param $visibility
      * @param $name
      * @param  array  $customProperties
-     *
      * @return LaraFile
      * @throws FileNotFoundException
      * @throws Throwable
@@ -135,7 +110,6 @@ trait LaraFileTrait
      * @param $visibility
      * @param $name
      * @param  array  $customProperties
-     *
      * @return Collection
      * @throws FileNotFoundException
      * @throws Throwable
@@ -169,7 +143,6 @@ trait LaraFileTrait
      * @param  string|null  $visibility
      * @param  string|null  $name
      * @param  array  $customProperties
-     *
      * @return LaraFile
      * @throws FileNotFoundException
      * @throws Throwable
@@ -206,7 +179,6 @@ trait LaraFileTrait
      * @param  string|null  $visibility
      * @param $name
      * @param  array  $customProperties
-     *
      * @return Collection
      * @throws FileNotFoundException
      * @throws Throwable
@@ -250,14 +222,11 @@ trait LaraFileTrait
     }
 
     /**
-     * Copy file from another model
-     *
      * @param  LaraFile  $laraFile
      * @param  string|null  $disk
      * @param  string|null  $type
      * @param  string|null  $visibility
      * @param  string|null  $name
-     *
      * @return LaraFile
      * @throws FileNotFoundException
      * @throws Throwable
@@ -285,7 +254,6 @@ trait LaraFileTrait
     /**
      * @param  UploadedFile  $uploadedFile
      * @param  string  $type
-     *
      * @return LaraFileUploader
      * @throws Throwable
      */
@@ -297,7 +265,6 @@ trait LaraFileTrait
     /**
      * @param  string  $uploadedFile
      * @param  string  $type
-     *
      * @return LaraFileUploader
      * @throws Throwable
      */

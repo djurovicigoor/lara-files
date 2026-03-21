@@ -2,10 +2,10 @@
 
 namespace DjurovicIgoor\LaraFiles\Classes;
 
-use DjurovicIgoor\LaraFiles\Exceptions\FileIsNotInstanceOfLaraFileModelException;
+use Throwable;
 use DjurovicIgoor\LaraFiles\Models\LaraFile;
 use DjurovicIgoor\LaraFiles\Traits\HashNameTrait;
-use Throwable;
+use DjurovicIgoor\LaraFiles\Exceptions\FileIsNotInstanceOfLaraFileModelException;
 
 class AnotherLaraFile extends AbstractFile
 {
@@ -13,7 +13,6 @@ class AnotherLaraFile extends AbstractFile
 
     /**
      * @param  LaraFile  $file
-     *
      * @throws FileIsNotInstanceOfLaraFileModelException|Throwable
      */
     public function __construct($file)

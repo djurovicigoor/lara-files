@@ -13,7 +13,7 @@ Lara Files is a lightweight and flexible Laravel package for handling file uploa
 It provides a fully-featured LaraFile model, a powerful upload service, and clean integration via traits—allowing you
 to easily attach files (images, documents, etc.) to any model in your application.
 
-Built for Laravel 10, 11, and 12 support in mind, and it's ideal for modern
+Built for Laravel 10, 11, 12, and 13 support in mind, and it's ideal for modern
 Laravel projects that need organized file management.
 
 <p align="center">
@@ -43,10 +43,10 @@ alt="lara-files preview" />
 
 # Versions
 
-| Lara files                                                      | Laravel     |
-|-----------------------------------------------------------------|-------------|
-| [v2.x](https://github.com/djurovicigoor/lara-files/tree/master) | 10.x - 12.x |
-| [v1.x](https://github.com/djurovicigoor/lara-files/tree/v1.x)   | 5.5 - 9.x   |
+| Lara files                                                       | Laravel      | PHP          |
+|------------------------------------------------------------------|--------------|--------------|
+| [v2.x](https://github.com/djurovicigoor/lara-files/tree/master) | 10.x - 13.x | 8.2+ (L13: 8.3+) |
+| [v1.x](https://github.com/djurovicigoor/lara-files/tree/v1.x)  | 5.5 - 9.x   | 7.2+         |
 
 # Installation
 

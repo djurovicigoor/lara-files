@@ -2,15 +2,14 @@
 
 namespace DjurovicIgoor\LaraFiles\Models\Observers;
 
-use DjurovicIgoor\LaraFiles\Models\LaraFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use DjurovicIgoor\LaraFiles\Models\LaraFile;
 
 class LaraFileObserver
 {
     /**
      * @param  LaraFile  $laraFile
-     *
      * @return void
      */
     public function creating(LaraFile $laraFile): void
@@ -26,7 +25,6 @@ class LaraFileObserver
 
     /**
      * @param  LaraFile  $laraFile
-     *
      * @return void
      */
     public function deleting(LaraFile $laraFile): void

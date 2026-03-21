@@ -1,12 +1,12 @@
 <?php
 
-use DjurovicIgoor\LaraFiles\Classes\LaraFileUploader;
-use DjurovicIgoor\LaraFiles\Exceptions\FileTypeIsNotPresentedException;
-use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
-use DjurovicIgoor\LaraFiles\Exceptions\VisibilityIsNotValidException;
-use Djurovicigoor\LaraFiles\Tests\TestSupport\TestModels\TestModel;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use DjurovicIgoor\LaraFiles\Classes\LaraFileUploader;
+use Djurovicigoor\LaraFiles\Tests\TestSupport\TestModels\TestModel;
+use DjurovicIgoor\LaraFiles\Exceptions\VisibilityIsNotValidException;
+use DjurovicIgoor\LaraFiles\Exceptions\FileTypeIsNotPresentedException;
+use DjurovicIgoor\LaraFiles\Exceptions\UnsupportedDiskAdapterException;
 
 beforeEach(function () {
     Storage::fake('local');
