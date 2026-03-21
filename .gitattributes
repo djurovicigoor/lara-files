@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+/.github            export-ignore
+/tests              export-ignore
+CHANGELOG.md        export-ignore
+CONTRIBUTING.md     export-ignore
+LICENSE.md          export-ignore
+UPGRADING.md        export-ignore
+phpunit.xml.dist    export-ignore
