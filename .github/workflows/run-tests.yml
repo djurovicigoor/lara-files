@@ -54,6 +54,7 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
 
           if [[ "${{ matrix.laravel }}" == "10.*" ]]; then
+            composer require doctrine/dbal:^3.6 --no-interaction --no-update
             composer require pestphp/pest:^2.0 pestphp/pest-plugin-laravel:^2.0 pestphp/pest-plugin-arch:^2.0 nunomaduro/collision:^7.0 --dev --no-interaction --no-update
           elif [[ "${{ matrix.laravel }}" == "13.*" ]]; then
             composer require pestphp/pest:^4.0 pestphp/pest-plugin-laravel:^4.0 pestphp/pest-plugin-arch:^4.0 nunomaduro/collision:^8.0 --dev --no-interaction --no-update
