@@ -23,6 +23,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Temporary URL expiration
+    |--------------------------------------------------------------------------
+    |
+    | Minutes a temporary URL stays valid. The url attribute of a private
+    | file on a disk that can sign URLs (s3, DigitalOcean Spaces) is a
+    | temporary URL that expires after this many minutes.
+    */
+    'temporary_url_expiration' => env('LARA_FILE_TEMPORARY_URL_EXPIRATION', 120),
+
+    /*
+    |--------------------------------------------------------------------------
     | Type of files - relations
     |--------------------------------------------------------------------------
     */

@@ -5,10 +5,12 @@ namespace DjurovicIgoor\LaraFiles\Models;
 use Exception;
 use Throwable;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use DjurovicIgoor\LaraFiles\Traits\Sortable;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use DjurovicIgoor\LaraFiles\Traits\CustomProperties;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -130,6 +132,12 @@ class LaraFile extends Model
      */
     public function getUrlAttribute()
     {
+        if ($this->shouldUseTemporaryUrl()) {
+            return $this->getTemporaryUrl(now()->addMinutes(min((int) config('lara-files.temporary_url_expiration', 120), 10080)), [
+                'ResponseContentDisposition' => $this->getContentDisposition(),
+            ]);
+        }
+
         $baseUrl = match ($this->attributes['disk']) {
             'public'   => config('filesystems.disks.public.url'),
             's3'       => config('filesystems.disks.s3.url'),
@@ -139,6 +147,46 @@ class LaraFile extends Model
         $baseUrl = \rtrim($baseUrl, '/');
 
         return $baseUrl.'/'.$this->fullPath;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldUseTemporaryUrl(): bool
+    {
+        $disk = $this->attributes['disk'] ?? null;
+
+        if (($this->attributes['visibility'] ?? null) !== 'private' || $disk === null) {
+            return false;
+        }
+
+        try {
+            return Storage::disk($disk)->providesTemporaryUrls();
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentDisposition(): string
+    {
+        $extension = $this->attributes['extension'] ?? '';
+        $name = ($this->attributes['name'] ?? null) ?: ($this->attributes['hash_name'] ?? 'file');
+
+        if ($extension !== '') {
+            $name = (string) preg_replace('/\.'.preg_quote($extension, '/').'$/i', '', $name);
+        }
+
+        $fileName = str_replace(['/', '\\'], '-', $extension !== '' ? "{$name}.{$extension}" : $name);
+        $fallbackFileName = (string) preg_replace('/[^\x20-\x7E]|[%"\\\\\/]/', '', Str::ascii($fileName));
+
+        if ($fallbackFileName === '' || $fallbackFileName === ".{$extension}") {
+            $fallbackFileName = $extension !== '' ? "file.{$extension}" : 'file';
+        }
+
+        return HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, $fileName, $fallbackFileName);
     }
 
     /**

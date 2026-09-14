@@ -2,6 +2,14 @@
 
 All notable changes to `LaraFiles` will be documented in this file.
 
+### Version 2.3.0
+
+- the `url` attribute of a private file on a disk that can sign URLs (s3, DigitalOcean Spaces) now returns a temporary
+  URL instead of a plain URL the storage rejects
+- on s3-compatible disks, temporary URLs returned by `url` keep the file's original name through an inline
+  `Content-Disposition`
+- added `temporary_url_expiration` config option (minutes, default 120, capped at 10080)
+
 ### Version 2.0.0
 
 - Completely rewritten code

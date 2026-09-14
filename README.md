@@ -103,6 +103,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Temporary URL expiration
+    |--------------------------------------------------------------------------
+    |
+    | Minutes a temporary URL stays valid. The url attribute of a private
+    | file on a disk that can sign URLs (s3, DigitalOcean Spaces) is a
+    | temporary URL that expires after this many minutes.
+    */
+    'temporary_url_expiration' => env('LARA_FILE_TEMPORARY_URL_EXPIRATION', 120),
+
+    /*
+    |--------------------------------------------------------------------------
     | Type of files - relations
     |--------------------------------------------------------------------------
     */
@@ -507,6 +518,13 @@ may pass the array of request parameters as the second argument to the getTempor
 ```php
 $avatar->getTemporaryUrl(now()->addMinutes(30));
 ```
+
+The `url` attribute does this for you on private files. When a file is `private` and its disk can sign URLs (s3,
+DigitalOcean Spaces, local disks with `serve` enabled), `url` returns a temporary URL valid for
+`temporary_url_expiration` minutes (default 120, capped at 10080, the one-week limit of an S3 signature). On
+s3-compatible disks the URL carries an inline `Content-Disposition` with the file's original name, so a browser shows or
+saves it under that name instead of its hash; Laravel's local driver ignores request parameters, so local temporary
+URLs do not. Public files, and private files on disks that cannot sign URLs, keep their plain URL.
 
 # Change log
 
